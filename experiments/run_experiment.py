@@ -8,7 +8,14 @@ from config.settings import (
 )
 
 from src.models.environment import Environment
-from src.utils.random_utils import generate_agents
+from src.models.activity_log import (
+    create_activity_log,
+    save_activity_logs,
+)
+from src.utils.random_utils import (
+    generate_agents,
+    save_agent_profiles,
+)
 
 from src.simulation.behavior import (
     occurs,
@@ -29,10 +36,23 @@ def main():
     # --------------------------------
     agents = generate_agents(NUM_AGENTS)
 
+    # -------------------------------
+    # Agentの初期特性を保存
+    # -------------------------------
+    save_agent_profiles(
+        agents=agents,
+        file_path="results/agents/agent_profiles.csv",
+    )
+
     # --------------------------------
     # Environment生成
     # --------------------------------
     environment = Environment()
+
+    # --------------------------------
+    # Activity Log
+    # --------------------------------
+    activity_logs = []
 
     print("=" * 60)
     print("Open Campus Trust Simulation")
@@ -86,6 +106,18 @@ def main():
             )
 
             # --------------------------------
+            # 研究室訪問をログに記録
+            # --------------------------------
+            create_activity_log(
+                logs=activity_logs,
+                agent_id=agent.agent_id,
+                step=environment.current_step,
+                phase=environment.phase,
+                action="visit_lab",
+                target=selected_lab["id"],
+            )
+
+            # --------------------------------
             # 研究室訪問
             # --------------------------------
             new_stamp = visit_lab(
@@ -94,30 +126,44 @@ def main():
             )
 
             # --------------------------------
-            # 今は確認用に最初の5人だけ表示
+            # 新しいスタンプを取得した場合
             # --------------------------------
-            if agent.agent_id in [
-                "A001",
-                "A002",
-                "A003",
-                "A004",
-                "A005",
-            ]:
-                if new_stamp:
-                    print(
-                        f"{agent.agent_id}"
-                        f"→ {selected_lab['name']}"
-                        f" (新しいStampを取得)"
-                        f"Stamp={agent.stamp_count}"
-                    )
-                else:
-                    print(
-                        f"{agent.agent_id}"
-                        f"→ {selected_lab['name']}"
-                        f" (訪問済み)"
-                        f"Stamp={agent.stamp_count}"
-                    )
+            if new_stamp:
+                create_activity_log(
+                    logs=activity_logs,
+                    agent_id=agent.agent_id,
+                    step=environment.current_step,
+                    phase=environment.phase,
+                    action="get_stamp",
+                    target=selected_lab["id"],
+                    value=agent.stamp_count,
+                )
+
+            # --------------------------------
+            # Stamp 1個以上でChat解放
+            # --------------------------------
+            if (
+                agent.stamp_count >= 1
+                and not agent.chat_permission
+            ):
+                agent.chat_permission = True
+
+                create_activity_log(
+                    logs=activity_logs,
+                    agent_id=agent.agent_id,
+                    step=environment.current_step,
+                    phase=environment.phase,
+                    action="unlock_chat",
+                    value=True,
+                )
         print()
+        print(f"Activity Log数: {len(activity_logs)}")
+
+    save_activity_logs(
+        logs=activity_logs,
+        file_path="results/logs/activity_logs.csv",
+    )
+    print("Activity Logを保存しました: results/logs/activity_logs.csv")
 
     # 最初の5人だけ表示
     print("--- Open Campus Result ---")
@@ -128,6 +174,7 @@ def main():
         print(f"Chat : {agent.chat_permission}")
         print(f"Vote : {agent.vote_permission}")
         print(f"Proposal : {agent.proposal_permission}")
+        print()
 
 if __name__ == "__main__":
     main()

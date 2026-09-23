@@ -1,5 +1,7 @@
 import random
 from src.models.agent import Agent
+import csv
+import os
 
 # Agentが持つ興味分野
 INTEREST_FIELDS = [
@@ -40,6 +42,62 @@ def generate_agent(agent_number: int) -> Agent:
     )
 
     return agent
+
+def save_agent_profiles(
+    agents: list[Agent],
+    file_path: str,
+) -> None:
+    """
+    生成したAgentの初期特性をCSVファイルとして保存する
+    """
+    directory = os.path.dirname(file_path)
+
+    if directory:
+        os.makedirs(directory, exist_ok=True)
+
+    with open(
+        file_path,
+        "w",
+        newline="",
+        encoding="utf-8",
+    ) as file:
+
+        writer = csv.writer(file)
+
+        # CSVヘッダー
+        writer.writerow([
+            "agent_id",
+            "activity",
+            "persistence",
+            "cooperation",
+            "governance",
+            "reliability",
+            "interest_AI",
+            "interest_Game",
+            "interest_WebApp",
+            "interest_Security",
+            "interest_Network",
+            "interest_Design",
+            "interest_Media",
+        ])
+
+        # Agentごとに保存
+        for agent in agents:
+            writer.writerow([
+                agent.agent_id,
+                agent.activity,
+                agent.persistence,
+                agent.cooperation,
+                agent.governance,
+                agent.reliability,
+                agent.interests.get("AI", 0.0),
+                agent.interests.get("Game", 0.0),
+                agent.interests.get("WebApp", 0.0),
+                agent.interests.get("Security", 0.0),
+                agent.interests.get("Network", 0.0),
+                agent.interests.get("Design", 0.0),
+                agent.interests.get("Media", 0.0),
+            ])
 
 def generate_agents(num_agents: int) -> list[Agent]:
     """

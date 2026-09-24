@@ -71,3 +71,96 @@ def visit_lab(agent: Agent, lab: dict) -> bool:
     agent.stamp_count += 1
 
     return True
+
+def calculate_chat_probability(agent: Agent) -> float:
+    """
+    通常のChat投稿を行う傾向を計算する。
+
+    Cooperation:
+        他者と関わろうとする傾向
+
+    Activity:
+        積極的に行動する傾向
+    """
+
+    probability = (
+        0.5 * agent.cooperation
+        + 0.5 * agent.activity
+    )
+
+    return max(0.0, min(1.0, probability))
+
+
+def calculate_reply_probability(agent: Agent) -> float:
+    """
+    他者のChatに返信する傾向を計算する。
+    """
+
+    probability = (
+        0.7 * agent.cooperation
+        + 0.3 * agent.activity
+    )
+
+    return max(0.0, min(1.0, probability))
+
+
+def calculate_post_visit_comment_probability(
+    agent: Agent,
+) -> float:
+    """
+    研究室訪問後に感想を投稿する確率。
+
+    post_visit_commentは独立したメイン行動ではなく、
+    visit_labに付随するイベントとして扱う。
+    """
+
+    probability = (
+        0.5 * agent.cooperation
+        + 0.5 * agent.activity
+    )
+
+    return max(0.0, min(1.0, probability))
+
+def choose_open_campus_action(agent: Agent) -> str:
+    """
+    Open Campus期間中のメイン行動を1つ選択する。
+
+    現段階での候補：
+    - visit_lab
+    - chat
+    - reply
+    - no_action
+
+    Chat権限がないAgentは
+    chat / replyを選択できない。
+    """
+
+    actions = [
+        "visit_lab",
+        "no_action",
+    ]
+
+    weights = [
+        calculate_visit_probability(agent),
+        0.2,
+    ]
+
+    # Chat権限がある場合だけ
+    # Chat系行動を候補に追加する
+    if agent.chat_permission:
+
+        actions.append("chat")
+        weights.append(
+            calculate_chat_probability(agent)
+        )
+
+        actions.append("reply")
+        weights.append(
+            calculate_reply_probability(agent)
+        )
+
+    return random.choices(
+        actions,
+        weights=weights,
+        k=1,
+    )[0]

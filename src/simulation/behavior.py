@@ -22,6 +22,24 @@ def calculate_visit_probability(agent: Agent) -> float:
 
     return max(0.0, min(1.0, probability))
 
+def calculate_login_probability(agent: Agent) -> float:
+    """
+    Communityにログインする確率を計算する。
+    
+    Persistence:
+        継続して参加する傾向
+    
+    Activity:
+        積極的に行動する傾向
+    """
+
+    probability = (
+        0.7 * agent.persistence
+        + 0.3 * agent.activity
+    )
+
+    return max(0.0, min(1.0, probability))
+
 def choose_lab(agent: Agent, labs: list[dict]) -> dict:
     """
     AgentのActivityとInterestをもとに
@@ -120,6 +138,32 @@ def calculate_post_visit_comment_probability(
     )
 
     return max(0.0, min(1.0, probability))
+
+def choose_community_action(agent: Agent) -> str:
+    """
+    Community Phaseで実行する
+    メイン行動を一つ選択する。
+    """
+
+    actions = [
+        "chat",
+        "reply",
+        "no_action",
+    ]
+
+    weights = [
+        calculate_chat_probability(agent),
+        calculate_reply_probability(agent),
+        0.2,
+    ]
+
+    selected_action = random.choices(
+        actions,
+        weights=weights,
+        k=1,
+    )[0]
+
+    return selected_action
 
 def choose_open_campus_action(agent: Agent) -> str:
     """

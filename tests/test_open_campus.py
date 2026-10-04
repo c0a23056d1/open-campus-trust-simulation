@@ -4,6 +4,7 @@ from config.settings import (
     NUM_AGENTS,
     RANDOM_SEED,
     OC_STEPS,
+    COMMUNITY_STEPS,
     LABS,
 )
 
@@ -11,6 +12,7 @@ from src.utils.random_utils import generate_agents
 
 from src.simulation.simulator import (
     run_open_campus_simulation,
+    run_community_simulation,
 )
 
 
@@ -175,3 +177,101 @@ def test_post_visit_comment_requires_visit():
         )
 
         assert key in visit_keys
+
+def create_test_full_simulation():
+
+    random.seed(RANDOM_SEED)
+
+    agents = generate_agents(NUM_AGENTS)
+
+    _, activity_logs = (
+        run_open_campus_simulation(
+            agents=agents,
+            labs=LABS,
+            oc_steps=OC_STEPS,
+        )
+    )
+
+    activity_logs = (
+        run_community_simulation(
+            agents=agents,
+            activity_logs=activity_logs,
+            community_steps=COMMUNITY_STEPS,
+            start_step=OC_STEPS + 1,
+        )
+    )
+
+    return agents, activity_logs
+
+def test_one_community_main_action_per_login():
+    _, activity_logs = (
+        create_test_full_simulation()
+    )
+
+    main_actions = {
+        "chat",
+        "reply",
+        "no_action",
+    }
+
+    login_keys = {
+        (log.agent_id, log.step)
+        for log in activity_logs
+        if (
+            log.phase == "community"
+            and log.action == "login_community"
+        )
+    }
+
+    for key in login_keys:
+
+        agent_id, step = key
+
+        actions = [
+            log
+            for log in activity_logs
+            if (
+                log.agent_id == agent_id
+                and log.step == step
+                and log.phase == "community"
+                and log.action in main_actions
+            )
+        ]
+
+        assert len(actions) == 1
+
+def test_community_action_requires_login():
+
+    _, activity_logs = (
+        create_test_full_simulation()
+    )
+
+    login_keys = {
+        (log.agent_id, log.step)
+        for log in activity_logs
+        if (
+            log.phase == "community"
+            and log.action == "login_community"
+        )
+    }
+
+    main_actions = {
+        "chat",
+        "reply",
+        "no_action",
+    }
+
+    for log in activity_logs:
+
+        if (
+            log.phase != "community"
+            or log.action not in main_actions
+        ):
+            continue
+
+        key = (
+            log.agent_id,
+            log.step,
+        )
+
+        assert key in login_keys

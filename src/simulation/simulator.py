@@ -5,8 +5,10 @@ from src.simulation.behavior import (
     choose_lab,
     visit_lab,
     choose_open_campus_action,
+    choose_community_action,
     calculate_post_visit_comment_probability,
     calculate_visit_probability,
+    calculate_login_probability,
 )
 
 def run_open_campus_simulation(
@@ -183,6 +185,86 @@ def run_open_campus_simulation(
                 continue
 
     return environment, activity_logs
+
+def run_community_simulation(
+        agents,
+        activity_logs,
+        community_steps,
+        start_step,
+):
+    """
+    Open Campus終了後のCommunity Phaseを実行する
+    """
+
+    for offset in range(community_steps):
+        current_step = start_step + offset
+
+        for agent in agents:
+
+            # すでにCommunityから離脱している場合
+            if agent.left_community:
+                continue
+
+            # Chat権を持っていない場合は、Communityに参加できない
+            if not agent.chat_permission:
+                continue
+
+            # Communityへのログイン確立を計算
+            login_probability = calculate_login_probability(agent)
+
+            # このStepでログインしなかった場合
+            if not occurs(login_probability):
+                continue
+
+            # ログインしたことをActivity Logへ記録
+            create_activity_log(
+                logs=activity_logs,
+                agent_id=agent.agent_id,
+                step=current_step,
+                phase="community",
+                action="login_community",
+            )
+
+            action = choose_community_action(agent)
+
+            if action == "no_action":
+                create_activity_log(
+                    logs=activity_logs,
+                    agent_id=agent.agent_id,
+                    step=current_step,
+                    phase="community",
+                    action="no_action",
+                )
+
+                continue
+
+            if action == "chat":
+
+                create_activity_log(
+                    logs=activity_logs,
+                    agent_id=agent.agent_id,
+                    step=current_step,
+                    phase="community",
+                    action="chat",
+                    target="community",
+                )
+
+                continue
+
+            if action == "reply":
+                
+                create_activity_log(
+                    logs=activity_logs,
+                    agent_id=agent.agent_id,
+                    step=current_step,
+                    phase="community",
+                    action="reply",
+                    target="community",
+                )
+
+                continue
+
+    return activity_logs
 
         
 

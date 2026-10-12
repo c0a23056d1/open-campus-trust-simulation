@@ -46,6 +46,9 @@ class Agent:
     # 訪問済み研究室
     visited_labs: set[str] = field(default_factory=set)
 
+    # 観察済み問題
+    viewed_issues: set[str] = field(default_factory=set)
+    expressed_issues: set[str] = field(default_factory=set)
 
     # ======================================
     # Communityで利用する権限

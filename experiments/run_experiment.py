@@ -135,6 +135,8 @@ from src.simulation.simulator import (
     run_community_simulation,
 )
 
+from collections import Counter
+
 
 def main():
 
@@ -248,6 +250,18 @@ def main():
         "results/logs/activity_logs.csv "
         "に保存しました。"
     )
+
+    community_actions = Counter(
+    log.action
+    for log in activity_logs
+    if log.phase == "community"
+    )
+
+    print()
+    print("---- Community Action Counts ----")
+
+    for action, count in community_actions.items():
+        print(f"{action}: {count}")
 
 
 if __name__ == "__main__":

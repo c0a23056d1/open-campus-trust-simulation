@@ -161,19 +161,30 @@ def choose_community_action(
     ]
 
     if environment.issue_available:
-        actions.append("view_issue")
+        issue_id = environment.current_issue_id
 
-        weights.append(
-            calculate_view_issue_probability(agent)
-        )
+        if issue_id is not None:
+            if issue_id not in agent.viewed_issues:
+                actions.append("view_issue")
 
-        actions.append("express_opinion")
+                weights.append(
+                    calculate_view_issue_probability(agent)
+                )
 
-        weights.append(
-            calculate_express_opinion_probability(
-                agent
-            )
-        )
+                # -------------------------------
+                # 閲覧済み、かつ意見表明をしていない場合
+                # -------------------------------
+
+            if (
+                issue_id in agent.viewed_issues
+                and issue_id not in agent.expressed_issues
+            ):
+
+                actions.append("express_opinion")
+                weights.append(
+                    calculate_express_opinion_probability(agent)
+                )
+                    
 
     selected_action = random.choices(
         actions,

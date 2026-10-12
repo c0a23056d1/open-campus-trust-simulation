@@ -289,6 +289,16 @@ def run_community_simulation(
                 continue
 
             if action == "view_issue":
+
+                issue_id = environment.current_issue_id
+
+                if issue_id is None:
+                    raise RuntimeError(
+                        "Issueが存在しない状態でview_issueが選択されました"
+                    )
+
+                # Agentの閲覧履歴に追加
+                agent.viewed_issues.add(issue_id)
                 
                 create_activity_log(
                     logs=activity_logs,
@@ -303,13 +313,36 @@ def run_community_simulation(
 
             if action == "express_opinion":
 
+                issue_id = environment.current_issue_id
+
+                if issue_id is None:
+                    raise RuntimeError(
+                        "Issueが存在しない状態でexpress_opinionが選択されました"
+                    )
+
+                # 閲覧していないIssueには意見表明できない
+                if issue_id not in agent.viewed_issues:
+                    raise RuntimeError(
+                        f"{agent.agent_id}は{issue_id}を閲覧していません"
+                    )
+
+                # 同じIssueへの重複意見表明を防ぐ
+                if issue_id in agent.expressed_issues:
+                    raise RuntimeError(
+                        f"{agent.agent_id}は{issue_id}に意見表明済みです"
+                    )
+                
+                # 意見表明履歴に追加
+                agent.expressed_issues.add(issue_id)
+                
+
                 create_activity_log(
                     logs=activity_logs,
                     agent_id=agent.agent_id,
                     step=current_step,
                     phase="community",
                     action="express_opinion",
-                    target=environment.current_issue_id,
+                    target=issue_id,
                 )
 
                 continue

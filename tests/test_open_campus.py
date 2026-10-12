@@ -284,3 +284,39 @@ def test_community_action_requires_login():
         )
 
         assert key in login_keys
+
+def test_express_opinion_requires_view_issue():
+    _, activity_logs = create_test_full_simulation()
+
+    viewed_steps = {}
+
+    for log in activity_logs:
+        if log.action == "view_issue":
+
+            key = (log.agent_id, log.target)
+            viewed_steps[key] = log.step
+
+        if log.action == "express_opinion":
+            key = (log.agent_id, log.target)
+
+            assert key in viewed_steps
+
+            # 1 Step = 1主要Actionのため、意見表明は閲覧より後のStepになる
+            assert viewed_steps[key] < log.step
+
+def test_issue_actions_are_not_duplicated():
+    _, activity_logs = create_test_full_simulation()
+
+    viewed = set()
+    expressed = set()
+
+    for log in activity_logs:
+        key = (log.agent_id, log.target)
+
+        if log.action == "view_issue":
+            assert key not in viewed
+            viewed.add(key)
+
+        if log.action == "express_opinion":
+            assert key not in expressed
+            expressed.add(key)

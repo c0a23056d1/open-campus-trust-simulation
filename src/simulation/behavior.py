@@ -139,7 +139,10 @@ def calculate_post_visit_comment_probability(
 
     return max(0.0, min(1.0, probability))
 
-def choose_community_action(agent: Agent) -> str:
+def choose_community_action(
+    agent: Agent,
+    environment,
+) -> str:
     """
     Community Phaseで実行する
     メイン行動を一つ選択する。
@@ -156,6 +159,21 @@ def choose_community_action(agent: Agent) -> str:
         calculate_reply_probability(agent),
         0.2,
     ]
+
+    if environment.issue_available:
+        actions.append("view_issue")
+
+        weights.append(
+            calculate_view_issue_probability(agent)
+        )
+
+        actions.append("express_opinion")
+
+        weights.append(
+            calculate_express_opinion_probability(
+                agent
+            )
+        )
 
     selected_action = random.choices(
         actions,
@@ -208,3 +226,31 @@ def choose_open_campus_action(agent: Agent) -> str:
         weights=weights,
         k=1,
     )[0]
+
+def calculate_view_issue_probability(
+        agent: Agent
+) -> float:
+
+    probability = (
+        0.7 * agent.governance
+        + 0.3 * agent.activity
+    )
+
+    return max(
+        0.0,
+        min(1.0, probability),
+    )
+
+def calculate_express_opinion_probability(
+    agent: Agent
+) -> float:
+
+    probability = (
+        0.6 * agent.governance
+        + 0.4 * agent.cooperation
+    )
+
+    return max(
+        0.0, 
+        min(1.0, probability),
+    )

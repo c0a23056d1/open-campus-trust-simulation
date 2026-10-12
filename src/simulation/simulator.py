@@ -191,6 +191,8 @@ def run_community_simulation(
         activity_logs,
         community_steps,
         start_step,
+        environment,
+        issue_interval,
 ):
     """
     Open Campus終了後のCommunity Phaseを実行する
@@ -198,6 +200,28 @@ def run_community_simulation(
 
     for offset in range(community_steps):
         current_step = start_step + offset
+
+        environment.current_step = current_step
+        environment.phase = "community"
+
+        # Issue更新
+
+        new_issue = update_issue(
+            environment=environment,
+            current_step=current_step,
+            start_step=start_step,
+            issue_interval=issue_interval,
+        )
+
+        if new_issue:
+            create_activity_log(
+                logs=activity_logs,
+                agent_id="SYSTEM",
+                step=current_step,
+                phase="community",
+                action="issue_created",
+                target=environment.current_issue_id,
+            )
 
         for agent in agents:
 
@@ -225,7 +249,7 @@ def run_community_simulation(
                 action="login_community",
             )
 
-            action = choose_community_action(agent)
+            action = choose_community_action(agent, environment)
 
             if action == "no_action":
                 create_activity_log(
@@ -264,7 +288,65 @@ def run_community_simulation(
 
                 continue
 
+            if action == "view_issue":
+                
+                create_activity_log(
+                    logs=activity_logs,
+                    agent_id=agent.agent_id,
+                    step=current_step,
+                    phase="community",
+                    action="view_issue",
+                    target=environment.current_issue_id,
+                )
+
+                continue
+
+            if action == "express_opinion":
+
+                create_activity_log(
+                    logs=activity_logs,
+                    agent_id=agent.agent_id,
+                    step=current_step,
+                    phase="community",
+                    action="express_opinion",
+                    target=environment.current_issue_id,
+                )
+
+                continue
+
     return activity_logs
+
+
+def update_issue(
+    environment,
+    current_step,
+    start_step,
+    issue_interval,
+):
+    """
+    Community Phaseで一定期間ごとに新しい
+    Issue(Vote内容)を発生させる
+    """
+
+    community_step = (
+        current_step - start_step + 1
+    )
+
+    # 5 Step目、10 Step目、15 Step目...に新しいIssueを発生させる
+    if community_step % issue_interval == 0:
+
+        issue_number = (
+            community_step // issue_interval
+        )
+
+        environment.issue_available = True
+        environment.current_issue_id = (
+            f"ISSUE_{issue_number:03d}"
+        )
+
+        return True
+
+    return False
 
         
 

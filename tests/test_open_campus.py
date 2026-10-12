@@ -5,6 +5,7 @@ from config.settings import (
     RANDOM_SEED,
     OC_STEPS,
     COMMUNITY_STEPS,
+    ISSUE_INTERVAL,
     LABS,
 )
 
@@ -184,36 +185,45 @@ def create_test_full_simulation():
 
     agents = generate_agents(NUM_AGENTS)
 
-    _, activity_logs = (
-        run_open_campus_simulation(
-            agents=agents,
-            labs=LABS,
-            oc_steps=OC_STEPS,
-        )
+    # ==========================================
+    # Open Campus Phase
+    # ==========================================
+
+    environment, activity_logs = run_open_campus_simulation(
+        agents=agents,
+        labs=LABS,
+        oc_steps=OC_STEPS,
     )
 
-    activity_logs = (
-        run_community_simulation(
-            agents=agents,
-            activity_logs=activity_logs,
-            community_steps=COMMUNITY_STEPS,
-            start_step=OC_STEPS + 1,
-        )
+    # ==========================================
+    # Community Phase
+    # ==========================================
+
+    activity_logs = run_community_simulation(
+        agents=agents,
+        activity_logs=activity_logs,
+        community_steps=COMMUNITY_STEPS,
+        start_step=OC_STEPS + 1,
+        environment=environment,
+        issue_interval=ISSUE_INTERVAL,
     )
 
     return agents, activity_logs
 
 def test_one_community_main_action_per_login():
-    _, activity_logs = (
-        create_test_full_simulation()
-    )
 
+    _, activity_logs = create_test_full_simulation()
+
+    # Community Phaseで選択可能な主要Action
     main_actions = {
         "chat",
         "reply",
+        "view_issue",
+        "express_opinion",
         "no_action",
     }
 
+    # ログインしたAgentとStepの組み合わせ
     login_keys = {
         (log.agent_id, log.step)
         for log in activity_logs
@@ -223,9 +233,8 @@ def test_one_community_main_action_per_login():
         )
     }
 
-    for key in login_keys:
-
-        agent_id, step = key
+    # ログインした各Stepで主要Actionが1つか確認
+    for agent_id, step in login_keys:
 
         actions = [
             log
@@ -242,9 +251,7 @@ def test_one_community_main_action_per_login():
 
 def test_community_action_requires_login():
 
-    _, activity_logs = (
-        create_test_full_simulation()
-    )
+    _, activity_logs = create_test_full_simulation()
 
     login_keys = {
         (log.agent_id, log.step)
@@ -258,6 +265,8 @@ def test_community_action_requires_login():
     main_actions = {
         "chat",
         "reply",
+        "view_issue",
+        "express_opinion",
         "no_action",
     }
 

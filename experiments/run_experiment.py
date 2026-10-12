@@ -118,6 +118,7 @@ from config.settings import (
     COMMUNITY_STEPS,
     LABS,
     RANDOM_SEED,
+    ISSUE_INTERVAL,
 )
 
 from src.utils.random_utils import (
@@ -181,6 +182,8 @@ def main():
         activity_logs=activity_logs,
         community_steps=COMMUNITY_STEPS,
         start_step=OC_STEPS + 1,
+        environment=environment,
+        issue_interval=ISSUE_INTERVAL
     )
 
     # ==========================================

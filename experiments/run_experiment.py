@@ -251,6 +251,24 @@ def main():
         "に保存しました。"
     )
 
+    print()
+    print("---- Permission Summary ----")
+
+    print(
+        "Chat権限取得者：",
+        sum(agent.chat_permission for agent in agents)
+    )
+
+    print(
+        "Vote権限取得者：",
+        sum(agent.vote_permission for agent in agents)
+    )
+
+    print(
+        "Proposal権限取得者：",
+        sum(agent.proposal_permission for agent in agents)
+    )
+
     community_actions = Counter(
     log.action
     for log in activity_logs

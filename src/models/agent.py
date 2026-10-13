@@ -49,6 +49,7 @@ class Agent:
     # 観察済み問題
     viewed_issues: set[str] = field(default_factory=set)
     expressed_issues: set[str] = field(default_factory=set)
+    voted_issues: set[str] = field(default_factory=set)
 
     # ======================================
     # Communityで利用する権限

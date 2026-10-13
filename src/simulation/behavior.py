@@ -184,6 +184,18 @@ def choose_community_action(
                 weights.append(
                     calculate_express_opinion_probability(agent)
                 )
+
+            # Vote権限があり、Issue閲覧済みで、
+            # まだ投票していない場合
+            if (
+                agent.vote_permission
+                and issue_id in agent.viewed_issues
+                and issue_id not in agent.voted_issues
+            ):
+                actions.append("vote")
+                weights.append(
+                    calculate_vote_probability(agent)
+                )
                     
 
     selected_action = random.choices(
@@ -265,3 +277,42 @@ def calculate_express_opinion_probability(
         0.0, 
         min(1.0, probability),
     )
+
+def calculate_vote_probability(agent):
+    """
+    Vote行動の選択重みを計算する。
+
+    Governanceが高いAgentほど
+    Voteを選択しやすくする。
+    """
+
+    return (
+        0.7 * agent.governance
+        + 0.3 * agent.activity
+    )
+
+def choose_vote_option(agent, issue):
+    """
+    Issueの選択肢から1つを選択する。
+    Agentの興味分野と対応する場合は
+    その興味の強さを選択重みに反映する。
+    """
+
+    options = issue.options
+
+    weights = []
+
+    for option in options:
+
+        if option in agent.interests:
+            weight = 0.1 + agent.interests[option]
+        else:
+            weight = 1.0
+
+        weights.append(weight)
+
+    return random.choices(
+        options,
+        weights=weights,
+        k=1,
+    )[0]

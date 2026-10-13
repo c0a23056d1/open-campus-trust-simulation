@@ -19,6 +19,8 @@ from src.simulation.simulator import (
 from src.models.task import Task
 from src.simulation.simulator import check_task_completion
 
+from src.simulation.permission import update_stamp_permissions
+
 def create_test_simulation():
 
     random.seed(RANDOM_SEED)
@@ -431,3 +433,52 @@ def test_task_expired():
 
     assert result is False
     assert len(logs) == 0
+
+def test_unlock_chat_by_stamp():
+    agent = generate_agents(1)[0]
+    agent.stamp_count = 1
+
+    unlocked = update_stamp_permissions(agent)
+
+    assert agent.chat_permission is True
+    assert agent.vote_permission is False
+    assert agent.proposal_permission is False
+
+    assert unlocked == ["chat"]
+
+def test_unlock_vote_by_stamp():
+
+    agent = generate_agents(1)[0]
+    agent.stamp_count = 3
+
+    unlocked = update_stamp_permissions(agent)
+
+    assert agent.chat_permission is True
+    assert agent.vote_permission is True
+    assert agent.proposal_permission is False
+
+    assert unlocked == ["chat", "vote"]
+
+def test_unlock_proposal_by_stamp():
+
+    agent = generate_agents(1)[0]
+    agent.stamp_count = 5
+
+    unlocked = update_stamp_permissions(agent)
+
+    assert agent.chat_permission is True
+    assert agent.vote_permission is True
+    assert agent.proposal_permission is True
+
+    assert unlocked == ["chat", "vote", "proposal"]
+
+def test_permission_not_unlocked_twice():
+
+    agent = generate_agents(1)[0]
+    agent.stamp_count = 3
+
+    first = update_stamp_permissions(agent)
+    second = update_stamp_permissions(agent)
+
+    assert first == ["chat", "vote"]
+    assert second == []

@@ -118,3 +118,41 @@ FUTURE_TASK_TYPES = [
         "required_action": "proposal",
     },
 ]
+
+ISSUE_TEMPLATES = [
+    {
+        "title": "どの研究分野に興味を持ちましたか？",
+        "options": [
+            "AI",
+            "Game",
+            "WebApp",
+            "Security",
+            "Network",
+            "Design",
+            "Media",
+        ],
+        "interest_based": True,
+    },
+    {
+        "title": "学食で食べたいメニューは？",
+        "options": [
+            "カレー",
+            "ラーメン",
+            "唐揚げ定食",
+            "パスタ",
+            "丼もの",
+        ],
+        "interest_based": False,
+    },
+    {
+        "title": "興味のある学部は？",
+        "options": [
+            "コンピュータサイエンス学部",
+            "メディア学部",
+            "工学部",
+            "デザイン学部",
+            "応用生物学部",
+        ],
+        "interest_based": False,
+    },
+]

@@ -19,6 +19,13 @@ from src.simulation.behavior import (
     calculate_login_probability,
 )
 
+from src.simulation.permission import update_stamp_permissions
+
+from src.simulation.behavior import calculate_vote_probability
+from src.models.issue import Issue
+from config.settings import ISSUE_TEMPLATES
+from src.simulation.behavior import choose_vote_option
+
 def run_open_campus_simulation(
     agents,
     labs,
@@ -115,24 +122,21 @@ def run_open_campus_simulation(
                     )
 
                     # ------------------------------
-                    # Chat解放
+                    # スタンプ数に基づく権限制御
                     # ------------------------------
 
-                    if (
-                        agent.stamp_count >= 1
-                        and not agent.chat_permission
-                    ):
+                    unlocked_permissions = update_stamp_permissions(agent)
 
-                        agent.chat_permission = True
+                    for permission in unlocked_permissions:
 
                         create_activity_log(
                             logs=activity_logs,
                             agent_id=agent.agent_id,
                             step=environment.current_step,
                             phase=environment.phase,
-                            action="unlock_chat",
-                            target="chat",
-                            value=True,
+                            action=f"unlocked_{permission}",
+                            target=permission,
+                            value=True
                         )
 
                     # ------------------------------
@@ -323,6 +327,7 @@ def run_community_simulation(
         environment,
         issue_interval,
 ):
+    current_issue = None
     current_task = None
     task_count = 0
 
@@ -346,13 +351,30 @@ def run_community_simulation(
         )
 
         if new_issue:
+
+            issue_number = (
+                (current_step - start_step + 1)
+                // issue_interval
+            )
+
+            template = ISSUE_TEMPLATES[
+                (issue_number - 1) % len(ISSUE_TEMPLATES)
+            ]
+
+            current_issue = Issue(
+                issue_id=environment.current_issue_id,
+                title=template["title"],
+                options=template["options"],
+                start_step=current_step,
+            )
             create_activity_log(
                 logs=activity_logs,
                 agent_id="SYSTEM",
                 step=current_step,
                 phase="community",
                 action="issue_created",
-                target=environment.current_issue_id,
+                target=current_issue.issue_id,
+                value=current_issue.title,
             )
 
         current_task, task_count = update_task(
@@ -509,6 +531,78 @@ def run_community_simulation(
                 current_step=current_step,
                 activity_logs=activity_logs,
             )
+
+                continue
+
+            # ==================================
+            # vote
+            # ==================================
+
+            if action == "vote":
+
+                issue_id = environment.current_issue_id
+
+                # Issueの存在確認
+                if issue_id is None:
+                    raise RuntimeError(
+                        "Issueが存在しない状態でvoteが選択されました"
+                    )
+
+                # Vote権限の確認
+                if not agent.vote_permission:
+                    raise RuntimeError(
+                        f"{agent.agent_id}にはVote権限がありません"
+                    )
+
+                # Issue閲覧済みか確認
+                if issue_id not in agent.viewed_issues:
+                    raise RuntimeError(
+                        f"{agent.agent_id}は{issue_id}を閲覧していません"
+                    )
+
+                # 重複投票防止
+                if issue_id in agent.voted_issues:
+                    raise RuntimeError(
+                        f"{agent.agent_id}は{issue_id}に投票済みです"
+                    )
+
+                if current_issue is None:
+                    raise RuntimeError("投票対象のIssueがありません")
+
+                vote_choice = choose_vote_option(
+                    agent,
+                    current_issue,
+                )
+
+                if not current_issue.add_vote(
+                    agent.agent_id,
+                    vote_choice,
+                ):
+                    raise RuntimeError("投票の登録に失敗しました")
+
+                agent.voted_issues.add(
+                    current_issue.issue_id
+                )
+
+                # Activity Logに記録
+                create_activity_log(
+                    logs=activity_logs,
+                    agent_id=agent.agent_id,
+                    step=current_step,
+                    phase="community",
+                    action="vote",
+                    target=issue_id,
+                    value=vote_choice,
+                )
+
+                # Vote Taskの達成判定
+                check_task_completion(
+                    agent=agent,
+                    action="vote",
+                    current_task=current_task,
+                    current_step=current_step,
+                    activity_logs=activity_logs,
+                )
 
                 continue
 

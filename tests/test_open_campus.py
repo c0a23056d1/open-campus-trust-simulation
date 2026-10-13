@@ -16,6 +16,8 @@ from src.simulation.simulator import (
     run_community_simulation,
 )
 
+from src.models.task import Task
+from src.simulation.simulator import check_task_completion
 
 def create_test_simulation():
 
@@ -320,3 +322,112 @@ def test_issue_actions_are_not_duplicated():
         if log.action == "express_opinion":
             assert key not in expressed
             expressed.add(key)
+
+def test_task_completion():
+    agent = generate_agents(1)[0]
+    
+    task = Task(
+        task_id="TASK_001",
+        name="チャットしてみよう",
+        required_action="chat",
+        start_step=15,
+        end_step=19
+    )
+
+    logs = []
+
+    result = check_task_completion(
+        agent=agent,
+        action="chat",
+        current_task=task,
+        current_step=16,
+        activity_logs=logs,
+    )
+
+    assert result is True
+    assert agent.agent_id in task.completed_agents
+    assert len(logs) == 1
+    assert logs[0].action == "complete_task"
+    assert logs[0].target == "TASK_001"
+
+def test_task_wrong_action():
+    agent = generate_agents(1)[0]
+
+    task = Task(
+        task_id="TASK_001",
+        name="チャットしてみよう",
+        required_action="chat",
+        start_step=15,
+        end_step=19,
+    )
+
+    logs = []
+
+    result = check_task_completion(
+        agent=agent,
+        action="reply",
+        current_task=task,
+        current_step=16,
+        activity_logs=logs,
+    )
+
+    assert result is False
+    assert len(logs) == 0
+
+def test_task_cannot_complete_twice():
+    agent = generate_agents(1)[0]
+
+    task = Task(
+        task_id="TASK_001",
+        name="チャットしてみよう",
+        required_action="chat",
+        start_step=15,
+        end_step=19,
+    )
+
+    logs = []
+
+    first = check_task_completion(
+        agent=agent,
+        action="chat",
+        current_task=task,
+        current_step=16,
+        activity_logs=logs,
+    )
+
+    second = check_task_completion(
+        agent=agent,
+        action="chat",
+        current_task=task,
+        current_step=17,
+        activity_logs=logs,
+    )
+
+    assert first is True
+    assert second is False
+    assert len(logs) == 1
+
+def test_task_expired():
+
+    agent = generate_agents(1)[0]
+
+    task = Task(
+        task_id="TASK_001",
+        name="チャットしてみよう",
+        required_action="chat",
+        start_step=15,
+        end_step=19,
+    )
+
+    logs = []
+
+    result = check_task_completion(
+        agent=agent,
+        action="chat",
+        current_task=task,
+        current_step=20,
+        activity_logs=logs,
+    )
+
+    assert result is False
+    assert len(logs) == 0

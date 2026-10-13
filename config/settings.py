@@ -80,3 +80,41 @@ LABS = [
         "field": "Media",
     },
 ]
+
+# ======================================
+# Task Setting
+# ======================================
+
+# Taskが発生する確率(各Community Step)
+TASK_SPAWN_PROBABILITY = 0.25
+
+# Taskの有効期限(Step数)
+TASK_DURATION = 5
+
+# 現段階で発生するTask
+TASK_TYPES = [
+    {
+        "name": "チャットしてみよう",
+        "required_action": "chat",
+    },
+    {
+        "name": "返信してみよう",
+        "required_action": "reply",
+    },
+    {
+        "name": "issueに意見を投稿しよう",
+        "required_action": "express_opinion",
+    },
+]
+
+# 将来の拡張候補
+FUTURE_TASK_TYPES = [
+    {
+        "name": "投票してみよう",
+        "required_action": "vote",
+    },
+    {
+        "name": "企画を提案してみよう",
+        "required_action": "proposal",
+    },
+]

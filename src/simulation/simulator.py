@@ -1,3 +1,11 @@
+import random
+
+from src.models.task import Task
+from config.settings import (
+    TASK_SPAWN_PROBABILITY,
+    TASK_DURATION,
+    TASK_TYPES,
+)
 from src.models.environment import Environment
 from src.models.activity_log import create_activity_log
 from src.simulation.behavior import (
@@ -186,6 +194,127 @@ def run_open_campus_simulation(
 
     return environment, activity_logs
 
+def update_task(
+    environment,
+    current_task,
+    current_step,
+    task_count,
+    activity_logs,
+):
+    """
+    Taskの終了確認と新規発生を行う。
+    """
+
+    # ==================================
+    # 既存Taskの終了判定
+    # ==================================
+
+    if current_task is not None:
+
+        if not current_task.is_active(current_step):
+
+            create_activity_log(
+                logs=activity_logs,
+                agent_id="SYSTEM",
+                step=current_step,
+                phase="community",
+                action="task_ended",
+                target=current_task.task_id,
+            )
+
+            current_task = None
+
+    # ==================================
+    # 新しいTaskの発生判定
+    # ==================================
+
+    if current_task is None:
+
+        if random.random() < TASK_SPAWN_PROBABILITY:
+
+            task_count += 1
+
+            selected_type = random.choice(
+                TASK_TYPES
+            )
+
+            task_id = f"TASK_{task_count:03d}"
+
+            current_task = Task(
+                task_id=task_id,
+                name=selected_type["name"],
+                required_action=selected_type["required_action"],
+                start_step=current_step,
+                end_step=current_step + TASK_DURATION - 1,
+            )
+
+            create_activity_log(
+                logs=activity_logs,
+                agent_id="SYSTEM",
+                step=current_step,
+                phase="community",
+                action="task_created",
+                target=task_id,
+                value=current_task.name,
+            )
+
+    # ==================================
+    # Environment更新
+    # ==================================
+
+    environment.task_available = (
+        current_task is not None
+    )
+
+    environment.current_task_id = (
+        current_task.task_id
+        if current_task is not None
+        else None
+    )
+
+    return current_task, task_count
+
+def check_task_completion(
+    agent,
+    action,
+    current_task,
+    current_step,
+    activity_logs,
+):
+    """
+    Agentの主要ActionがTask達成条件を満たしているか確認する。
+    """
+
+    if current_task is None:
+        return False
+    
+    if not current_task.can_complete(
+        agent_id=agent.agent_id,
+        action=action,
+        current_step=current_step,
+    ):
+        return False
+
+    # Task達成者として登録
+    current_task.completed_agents.add(
+        agent.agent_id
+    )
+
+    # Activity Logへ達成イベントを記録
+    create_activity_log(
+        logs=activity_logs,
+        agent_id=agent.agent_id,
+        step=current_step,
+        phase="community",
+        action="complete_task",
+        target=current_task.task_id,
+        value=action,
+    )
+
+    return True
+
+
+
 def run_community_simulation(
         agents,
         activity_logs,
@@ -194,6 +323,9 @@ def run_community_simulation(
         environment,
         issue_interval,
 ):
+    current_task = None
+    task_count = 0
+
     """
     Open Campus終了後のCommunity Phaseを実行する
     """
@@ -222,6 +354,14 @@ def run_community_simulation(
                 action="issue_created",
                 target=environment.current_issue_id,
             )
+
+        current_task, task_count = update_task(
+            environment=environment,
+            current_task=current_task,
+            current_step=current_step,
+            task_count=task_count,
+            activity_logs=activity_logs,
+        )
 
         for agent in agents:
 
@@ -273,6 +413,15 @@ def run_community_simulation(
                     target="community",
                 )
 
+                # Task完了判定
+                check_task_completion(
+                    agent=agent,
+                    action=action,
+                    current_task=current_task,
+                    current_step=current_step,
+                    activity_logs=activity_logs,
+                )
+
                 continue
 
             if action == "reply":
@@ -284,6 +433,14 @@ def run_community_simulation(
                     phase="community",
                     action="reply",
                     target="community",
+                )
+
+                check_task_completion(
+                    agent=agent,
+                    action=action,
+                    current_task=current_task,
+                    current_step=current_step,
+                    activity_logs=activity_logs,
                 )
 
                 continue
@@ -345,6 +502,14 @@ def run_community_simulation(
                     target=issue_id,
                 )
 
+                check_task_completion(
+                agent=agent,
+                action="express_opinion",
+                current_task=current_task,
+                current_step=current_step,
+                activity_logs=activity_logs,
+            )
+
                 continue
 
     return activity_logs
@@ -380,6 +545,7 @@ def update_issue(
         return True
 
     return False
+
 
         
 

@@ -18,3 +18,4 @@ class Environment:
 
     current_issue_id: str | None = None
     task_available: bool = False
+    current_task_id: str | None = None

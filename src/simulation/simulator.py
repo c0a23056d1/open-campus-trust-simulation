@@ -26,6 +26,8 @@ from src.models.issue import Issue
 from config.settings import ISSUE_TEMPLATES
 from src.simulation.behavior import choose_vote_option
 
+from config.settings import PROPOSAL_TEMPLATES
+
 def run_open_campus_simulation(
     agents,
     labs,
@@ -330,6 +332,7 @@ def run_community_simulation(
     current_issue = None
     current_task = None
     task_count = 0
+    proposals = []
 
     """
     Open Campus終了後のCommunity Phaseを実行する
@@ -605,6 +608,49 @@ def run_community_simulation(
                 )
 
                 continue
+
+            elif action == "proposal":
+
+                if not agent.proposal_permission:
+                    continue
+
+                # まだ提案していないテーマを抽出
+                available_topics = [
+                    topic
+                    for topic in PROPOSAL_TEMPLATES
+                    if topic not in agent.proposed_topics
+                ]
+
+                if available_topics:
+
+                    proposal_topic = random.choice(
+                        available_topics
+                    )
+
+                    agent.proposed_topics.add(
+                        proposal_topic
+                    )
+
+                    proposal_id = (
+                        f"PROPOSAL_{len(proposals) + 1:03d}"
+                    )
+
+                    proposals.append({
+                        "proposal_id": proposal_id,
+                        "agent_id": agent.agent_id,
+                        "topic": proposal_topic,
+                        "step": current_step,
+                    })
+
+                    create_activity_log(
+                        logs=activity_logs,
+                        agent_id=agent.agent_id,
+                        step=current_step,
+                        phase="community",
+                        action="proposal",
+                        target=proposal_id,
+                        value=proposal_topic,
+                    )
 
     return activity_logs
 

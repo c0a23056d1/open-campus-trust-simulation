@@ -196,6 +196,12 @@ def choose_community_action(
                 weights.append(
                     calculate_vote_probability(agent)
                 )
+
+            if agent.proposal_permission:
+                actions.append("proposal")
+                weights.append(
+                    calculate_proposal_probability(agent)
+                )
                     
 
     selected_action = random.choices(
@@ -316,3 +322,14 @@ def choose_vote_option(agent, issue):
         weights=weights,
         k=1,
     )[0]
+
+def calculate_proposal_probability(agent):
+    """
+    Agentの潜在特性からProposal行動の重みを計算する。
+    """
+
+    return (
+        0.5 * agent.governance
+        + 0.3 * agent.cooperation
+        + 0.2 * agent.activity
+    )

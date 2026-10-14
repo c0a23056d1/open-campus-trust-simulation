@@ -51,6 +51,8 @@ class Agent:
     expressed_issues: set[str] = field(default_factory=set)
     voted_issues: set[str] = field(default_factory=set)
 
+    proposed_topics: set[str] = field(default_factory=set)
+
     # ======================================
     # Communityで利用する権限
     # ======================================

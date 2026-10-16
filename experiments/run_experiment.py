@@ -1,116 +1,8 @@
-# import random
-
-# from config.settings import (
-#     NUM_AGENTS,
-#     RANDOM_SEED,
-#     OC_STEPS,
-#     LABS,
-#     COMMUNITY_STEPS,
-# )
-
-# from src.utils.random_utils import (
-#     generate_agents,
-#     save_agent_profiles,
-# )
-
-# from src.models.activity_log import save_activity_logs
-
-# from src.simulation.simulator import (
-#     run_open_campus_simulation,
-#     run_community_simulation,
-# )
-
-
-# def main():
-
-#     # ==========================================
-#     # Random Seed
-#     # ==========================================
-
-#     random.seed(RANDOM_SEED)
-
-#     # ==========================================
-#     # Agent生成
-#     # ==========================================
-
-#     agents = generate_agents(NUM_AGENTS)
-
-#     # Agentの初期特性を保存
-#     save_agent_profiles(
-#         agents=agents,
-#         file_path="results/agents/agent_profiles.csv",
-#     )
-
-#     print("=" * 60)
-#     print("Open Campus Trust Simulation")
-#     print("=" * 60)
-
-#     print(f"生成Agent数: {len(agents)}")
-#     print()
-
-#     # ==========================================
-#     # Open Campus Simulation
-#     # ==========================================
-
-#     environment, activity_logs = (
-#         run_open_campus_simulation(
-#             agents=agents,
-#             labs=LABS,
-#             oc_steps=OC_STEPS,
-#         )
-#     )
-
-#     activity_logs = run_community_simulation(
-#         agents=agents,
-#         activity_logs=activity_logs,
-#         community_steps=COMMUNITY_STEPS,
-#         start_step=OC_STEPS + 1,
-#     )
-
-#     # ==========================================
-#     # Activity Log保存
-#     # ==========================================
-
-#     save_activity_logs(
-#         logs=activity_logs,
-#         file_path="results/logs/activity_logs.csv",
-#     )
-
-#     # ==========================================
-#     # 結果表示
-#     # ==========================================
-
-#     print("---- Open Campus Result ----")
-
-#     for agent in agents[:5]:
-
-#         print()
-#         print(f"Agent ID: {agent.agent_id}")
-#         print(f"Activity: {agent.activity:.3f}")
-#         print(f"Stamp: {agent.stamp_count}")
-#         print(
-#             f"Visited Labs: "
-#             f"{len(agent.visited_labs)}"
-#         )
-#         print(
-#             f"Chat Permission: "
-#             f"{agent.chat_permission}"
-#         )
-
-#     print()
-#     print(f"Activity Log数: {len(activity_logs)}")
-
-#     print(
-#         "Activity Logを "
-#         "results/logs/activity_logs.csv "
-#         "に保存しました。"
-#     )
-
-
-# if __name__ == "__main__":
-#     main()
-
 import random
+from dataclasses import asdict
+import csv
+import json
+import os
 
 from config.settings import (
     NUM_AGENTS,
@@ -167,7 +59,7 @@ def main():
     # Open Campus Phase
     # ==========================================
 
-    environment, activity_logs = (
+    environment, activity_logs, passport_history = (
         run_open_campus_simulation(
             agents=agents,
             labs=LABS,
@@ -185,7 +77,10 @@ def main():
         community_steps=COMMUNITY_STEPS,
         start_step=OC_STEPS + 1,
         environment=environment,
-        issue_interval=ISSUE_INTERVAL
+        issue_interval=ISSUE_INTERVAL,
+        passport_history=passport_history,
+        total_labs=len(LABS),
+        community_start_step=OC_STEPS + 1,
     )
 
     # ==========================================
@@ -237,6 +132,20 @@ def main():
     )
 
     # ==========================================
+    # Trust計算用のログ形式に変換
+    # ==========================================
+
+    trust_logs = [
+        asdict(log)
+        for log in activity_logs
+        if log.agent_id != "SYSTEM"
+    ]
+
+    print(
+        f"Trust計算対象ログ数: {len(trust_logs)}"
+    )
+
+    # ==========================================
     # CSV保存
     # ==========================================
 
@@ -280,6 +189,61 @@ def main():
 
     for action, count in community_actions.items():
         print(f"{action}: {count}")
+
+        # Trust PassportをCSVに保存
+    output_path = "results/passports/trust_passports.csv"
+
+    os.makedirs(
+        os.path.dirname(output_path),
+        exist_ok=True,
+    )
+
+    with open(
+        output_path,
+        "w",
+        newline="",
+        encoding="utf-8",
+    ) as file:
+
+        writer = csv.writer(file)
+
+        writer.writerow([
+            "passport_id",
+            "agent_id",
+            "step",
+            "participation",
+            "contribution",
+            "reliability",
+            "governance",
+            "interests",
+            "evidence",
+        ])
+
+        for passport in passport_history:
+            writer.writerow([
+                passport["passport_id"],
+                passport["agent_id"],
+                passport["step"],
+                passport["participation"],
+                passport["contribution"],
+                passport["reliability"],
+                passport["governance"],
+                json.dumps(
+                    passport["interests"],
+                    ensure_ascii=False,
+                ),
+                json.dumps(
+                    passport["evidence"],
+                    ensure_ascii=False,
+                ),
+            ])
+
+    print(
+        f"Trust Passportを{output_path}に保存しました。"
+    )
+    print(
+        f"生成Passport数: {len(passport_history)}"
+    )
 
 
 if __name__ == "__main__":

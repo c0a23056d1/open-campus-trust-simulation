@@ -1,4 +1,6 @@
 import random
+from dataclasses import asdict
+from src.trust.passport import generate_passport
 
 from src.models.task import Task
 from config.settings import (
@@ -28,6 +30,38 @@ from src.simulation.behavior import choose_vote_option
 
 from config.settings import PROPOSAL_TEMPLATES
 
+def update_trust_passports(
+    agents,
+    activity_logs,
+    current_step,
+    passport_history,
+    total_labs,
+    community_start_step,
+):
+    """
+    指定Step時点の全AgentのTrust Passportを生成する
+    """
+
+    # ActivityLogを辞書形式に変換
+    trust_logs = [
+        asdict(log)
+        for log in activity_logs
+        if log.agent_id != "SYSTEM"
+    ]
+
+    # AgentごとにTrust Passportを生成
+    for agent in agents:
+
+        passport = generate_passport(
+            agent_id=agent.agent_id,
+            logs=trust_logs,
+            current_step=current_step,
+            total_labs=total_labs,
+            community_start_step=community_start_step,
+        )
+
+        passport_history.append(passport)
+
 def run_open_campus_simulation(
     agents,
     labs,
@@ -46,6 +80,7 @@ def run_open_campus_simulation(
     environment = Environment()
 
     activity_logs = []
+    passport_history = []
 
     # ==========================================
     # Open Campus Phase
@@ -198,7 +233,17 @@ def run_open_campus_simulation(
 
                 continue
 
-    return environment, activity_logs
+        # このStep終了時点のTrust Passportを生成
+        update_trust_passports(
+            agents=agents,
+            activity_logs=activity_logs,
+            current_step=step,
+            passport_history=passport_history,
+            total_labs=len(labs),
+            community_start_step=oc_steps + 1,
+        )
+
+    return environment, activity_logs, passport_history
 
 def update_task(
     environment,
@@ -320,14 +365,16 @@ def check_task_completion(
     return True
 
 
-
 def run_community_simulation(
-        agents,
-        activity_logs,
-        community_steps,
-        start_step,
-        environment,
-        issue_interval,
+    agents,
+    activity_logs,
+    community_steps,
+    start_step,
+    environment,
+    issue_interval,
+    passport_history,
+    total_labs,
+    community_start_step,
 ):
     current_issue = None
     current_task = None
@@ -651,6 +698,15 @@ def run_community_simulation(
                         target=proposal_id,
                         value=proposal_topic,
                     )
+        # このStep終了時点のTrust Passportを生成
+        update_trust_passports(
+            agents=agents,
+            activity_logs=activity_logs,
+            current_step=current_step,
+            passport_history=passport_history,
+            total_labs=total_labs,
+            community_start_step=community_start_step,
+        )
 
     return activity_logs
 

@@ -28,7 +28,22 @@ from src.models.issue import Issue
 from config.settings import ISSUE_TEMPLATES
 from src.simulation.behavior import choose_vote_option
 
-from config.settings import PROPOSAL_TEMPLATES
+from src.simulation.proposal_generator import (
+    generate_proposal,
+)
+
+from src.simulation.proposal_voting import (
+    cast_proposal_vote,
+    finalize_proposal,
+)
+
+from src.evaluation.proposal_metrics import (
+    calculate_proposal_metrics,
+)
+
+from config.settings import (
+    PROPOSAL_VOTING_DURATION,
+)
 
 def update_trust_passports(
     agents,
@@ -375,6 +390,7 @@ def run_community_simulation(
     passport_history,
     total_labs,
     community_start_step,
+    return_proposal_results=False,
 ):
     current_issue = None
     current_task = None
@@ -461,7 +477,11 @@ def run_community_simulation(
                 action="login_community",
             )
 
-            action = choose_community_action(agent, environment)
+            action = choose_community_action(
+                agent=agent,
+                environment=environment,
+                proposals=proposals,
+            )
 
             if action == "no_action":
                 create_activity_log(
@@ -659,45 +679,128 @@ def run_community_simulation(
             elif action == "proposal":
 
                 if not agent.proposal_permission:
-                    continue
+                    raise RuntimeError(
+                        f"{agent.agent_id}にはProposal権限がありません"
+                    )
 
-                # まだ提案していないテーマを抽出
-                available_topics = [
-                    topic
-                    for topic in PROPOSAL_TEMPLATES
-                    if topic not in agent.proposed_topics
+                proposal_id = (
+                    f"PROPOSAL_{len(proposals) + 1:04d}"
+                )
+
+                # Agentの潜在特性からPQSを生成
+                proposal = generate_proposal(
+                    agent=agent,
+                    proposal_id=proposal_id,
+                    current_step=current_step,
+                )
+
+                proposals.append(proposal)
+
+                create_activity_log(
+                    logs=activity_logs,
+                    agent_id=agent.agent_id,
+                    step=current_step,
+                    phase="community",
+                    action="proposal",
+                    target=proposal_id,
+                    value=proposal.quality,
+                )
+
+                check_task_completion(
+                    agent=agent,
+                    action="proposal",
+                    current_task=current_task,
+                    current_step=current_step,
+                    activity_logs=activity_logs,
+                )
+
+                continue
+
+            if action == "vote_proposal":
+
+                if not agent.vote_permission:
+                    raise RuntimeError(
+                        f"{agent.agent_id}にはVote権限がありません"
+                    )
+
+                # 投票可能なProposalを取得
+                available_proposals = [
+                    proposal
+                    for proposal in proposals
+                    if proposal.is_voting_open(
+                        current_step,
+                        PROPOSAL_VOTING_DURATION,
+                    )
+                    and agent.agent_id not in proposal.votes
                 ]
 
-                if available_topics:
-
-                    proposal_topic = random.choice(
-                        available_topics
+                if not available_proposals:
+                    raise RuntimeError(
+                        "投票可能なProposalがありません"
                     )
 
-                    agent.proposed_topics.add(
-                        proposal_topic
+                # 初期モデルでは候補から一様にランダム選択
+                target_proposal = random.choice(
+                    available_proposals
+                )
+
+                result = cast_proposal_vote(
+                    agent=agent,
+                    proposal=target_proposal,
+                    current_step=current_step,
+                )
+
+                if result is None:
+                    raise RuntimeError(
+                        "Proposalへの投票に失敗しました"
                     )
 
-                    proposal_id = (
-                        f"PROPOSAL_{len(proposals) + 1:03d}"
-                    )
+                create_activity_log(
+                    logs=activity_logs,
+                    agent_id=agent.agent_id,
+                    step=current_step,
+                    phase="community",
+                    action="vote_proposal",
+                    target=target_proposal.proposal_id,
+                    value="yes" if result["support"] else "no",
+                )
 
-                    proposals.append({
-                        "proposal_id": proposal_id,
-                        "agent_id": agent.agent_id,
-                        "topic": proposal_topic,
-                        "step": current_step,
-                    })
+                check_task_completion(
+                    agent=agent,
+                    action="vote_proposal",
+                    current_task=current_task,
+                    current_step=current_step,
+                    activity_logs=activity_logs,
+                )
 
-                    create_activity_log(
-                        logs=activity_logs,
-                        agent_id=agent.agent_id,
-                        step=current_step,
-                        phase="community",
-                        action="proposal",
-                        target=proposal_id,
-                        value=proposal_topic,
-                    )
+                continue
+
+        # ===========================================
+        # Proposalの採択判定
+        # ===========================================
+        for proposal in proposals:
+            if proposal.status != "open":
+                continue
+
+            old_status = proposal.status
+
+            new_status = finalize_proposal(
+                proposal=proposal,
+                current_step=current_step,
+            )
+
+            if old_status == "open" and new_status != "open":
+
+                create_activity_log(
+                    logs=activity_logs,
+                    agent_id="SYSTEM",
+                    step=current_step,
+                    phase="community",
+                    action="proposal_finalized",
+                    target=proposal.proposal_id,
+                    value=new_status,
+                )
+
         # このStep終了時点のTrust Passportを生成
         update_trust_passports(
             agents=agents,
@@ -707,6 +810,15 @@ def run_community_simulation(
             total_labs=total_labs,
             community_start_step=community_start_step,
         )
+
+    # ===========================================
+    # Community終了時のProposalの集計
+    # ===========================================
+    proposal_metrics = calculate_proposal_metrics(proposals)
+
+    # Proposal結果を取得したい場合
+    if return_proposal_results:
+        return activity_logs, proposals, proposal_metrics
 
     return activity_logs
 

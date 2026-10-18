@@ -142,11 +142,16 @@ def calculate_post_visit_comment_probability(
 def choose_community_action(
     agent: Agent,
     environment,
+    proposals=None,
+    proposal_submission_open=True
 ) -> str:
     """
     Community Phaseで実行する
     メイン行動を一つ選択する。
     """
+
+    if proposals is None:
+        proposals = []
 
     actions = [
         "chat",
@@ -196,13 +201,72 @@ def choose_community_action(
                 weights.append(
                     calculate_vote_probability(agent)
                 )
+    # ============================================
+    # Proposalへの賛否投票
+    # ============================================
+    if agent.vote_permission:
+        from config.settings import PROPOSAL_VOTING_DURATION
 
-            if agent.proposal_permission:
-                actions.append("proposal")
-                weights.append(
-                    calculate_proposal_probability(agent)
-                )
-                    
+        available_proposals = [
+            proposal
+            for proposal in proposals
+            if proposal.is_voting_open(
+                environment.current_step,
+                PROPOSAL_VOTING_DURATION,
+            )
+            and agent.agent_id not in proposal.votes
+        ]
+
+        if available_proposals:
+
+            actions.append("vote_proposal")
+            weights.append(
+                calculate_vote_probability(agent)
+            )
+
+    # ============================================
+    # Proposal提出
+    # ============================================
+
+    if (
+        agent.proposal_permission
+        and proposal_submission_open
+    ):
+
+        actions.append("proposal")
+
+        weights.append(
+            calculate_proposal_probability(agent)
+        )
+
+    # ============================================
+    # Proposalへの賛否投票
+    # ============================================
+
+    if agent.vote_permission:
+
+        from config.settings import PROPOSAL_VOTING_DURATION
+
+        available_proposals = [
+            proposal
+            for proposal in proposals
+            if proposal.is_voting_open(
+                environment.current_step,
+                PROPOSAL_VOTING_DURATION,
+            )
+            and agent.agent_id not in proposal.votes
+        ]
+
+        if available_proposals:
+
+            actions.append("vote_proposal")
+            weights.append(
+                calculate_vote_probability(agent)
+            )
+
+    # ===========================================
+    # 行動を一つ選択
+    # ===========================================
 
     selected_action = random.choices(
         actions,
@@ -284,17 +348,17 @@ def calculate_express_opinion_probability(
         min(1.0, probability),
     )
 
-def calculate_vote_probability(agent):
+def calculate_vote_probability(agent: Agent) -> float:
     """
     Vote行動の選択重みを計算する。
 
-    Governanceが高いAgentほど
-    Voteを選択しやすくする。
+    Governance：意思決定への関心
+    Persistence：継続的な参加傾向
     """
 
     return (
         0.7 * agent.governance
-        + 0.3 * agent.activity
+        + 0.3 * agent.persistence
     )
 
 def choose_vote_option(agent, issue):
@@ -323,13 +387,19 @@ def choose_vote_option(agent, issue):
         k=1,
     )[0]
 
-def calculate_proposal_probability(agent):
+def calculate_proposal_probability(agent: Agent) -> float:
     """
-    Agentの潜在特性からProposal行動の重みを計算する。
+    Proposal行動の選択重み。
+
+    Activity：活動への積極性
+    Persistence：継続性
+    Governance：意思決定への関心
     """
 
-    return (
-        0.5 * agent.governance
-        + 0.3 * agent.cooperation
-        + 0.2 * agent.activity
+    score = (
+        0.3 * agent.activity
+        + 0.3 * agent.persistence
+        + 0.4 * agent.governance
     )
+
+    return max(0.0, min(1.0, score))

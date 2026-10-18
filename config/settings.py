@@ -165,3 +165,23 @@ PROPOSAL_TEMPLATES = [
     "学食の特別メニューを企画する",
     "研究室紹介イベントを開催する",
 ]
+
+# ==========================================
+# Proposal生成・品質評価
+# ==========================================
+
+# Proposal 品質生成
+PROPOSAL_QUALITY_BASE = 0.2
+PROPOSAL_QUALITY_WEIGHT = 0.6
+PROPOSAL_QUALITY_NOISE = 0.1
+
+# Agentの認識品質
+PROPOSAL_PERCEPTION_NOISE = 0.2
+PROPOSAL_SUPPORT_THRESHOLD = 0.6
+
+# Proposalの採択条件
+PROPOSAL_APPROVAL_THRESHOLD = 0.6
+PROPOSAL_MIN_VOTES = 3
+
+# 投票期間 (初期仮定)
+PROPOSAL_VOTING_DURATION = 5

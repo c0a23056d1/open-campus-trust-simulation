@@ -1,0 +1,4 @@
+proposal_id,agent_id,created_step,relevance,feasibility,benefit,PQS,total_votes,yes_votes,no_votes,approval_rate,status,rejection_reason
+PROPOSAL_0001,A017,22,0.6623805675479162,0.207917296817217,0.6698978157269254,0.5133985600306862,5,1,4,0.2,rejected,insufficient_approval
+PROPOSAL_0002,A017,24,0.727978600927141,0.3048327727029263,0.8309767841768401,0.6212627192689691,8,4,4,0.5,rejected,insufficient_approval
+PROPOSAL_0003,A017,29,0.8065738651884514,0.301294817683873,0.748663391219121,0.6188440246971484,7,2,5,0.2857142857142857,rejected,insufficient_approval

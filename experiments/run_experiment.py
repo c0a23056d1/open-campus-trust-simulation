@@ -29,6 +29,11 @@ from src.simulation.simulator import (
 
 from collections import Counter
 
+# PERMISSION_METHOD = "Stamp"
+# PERMISSION_METHOD = "PT"
+# PERMISSION_METHOD = "CT"
+PERMISSION_METHOD = "Multi"
+
 
 def main():
 
@@ -64,6 +69,7 @@ def main():
             agents=agents,
             labs=LABS,
             oc_steps=OC_STEPS,
+            permission_method=PERMISSION_METHOD,
         )
     )
 
@@ -71,16 +77,20 @@ def main():
     # Community Phase
     # ==========================================
 
-    activity_logs = run_community_simulation(
-        agents=agents,
-        activity_logs=activity_logs,
-        community_steps=COMMUNITY_STEPS,
-        start_step=OC_STEPS + 1,
-        environment=environment,
-        issue_interval=ISSUE_INTERVAL,
-        passport_history=passport_history,
-        total_labs=len(LABS),
-        community_start_step=OC_STEPS + 1,
+    activity_logs, proposals, proposal_metrics = (
+        run_community_simulation(
+            agents=agents,
+            activity_logs=activity_logs,
+            community_steps=COMMUNITY_STEPS,
+            start_step=OC_STEPS + 1,
+            environment=environment,
+            issue_interval=ISSUE_INTERVAL,
+            passport_history=passport_history,
+            total_labs=len(LABS),
+            community_start_step=OC_STEPS + 1,
+            permission_method=PERMISSION_METHOD,
+            return_proposal_results=True,
+        )
     )
 
     # ==========================================
@@ -158,6 +168,68 @@ def main():
         "Activity Logを "
         "results/logs/activity_logs.csv "
         "に保存しました。"
+    )
+
+    # ==========================================
+    # Proposal結果の集計
+    # ==========================================
+
+    print()
+    print("---- Proposal Metrics ----")
+    print()
+
+    print(
+        f"提出Proposal数："
+        f"{proposal_metrics['submitted_count']}"
+    )
+
+    print(
+        f"採択Proposal数(APC):"
+        f"{proposal_metrics['APC']}"
+    )
+
+    if proposal_metrics["APQ"] is not None:
+        print(
+            f"採択Proposal平均品質(APQ): "
+            f"{proposal_metrics['APQ']:.3f}"
+        )
+    else:
+        print("採択Proposal平均品質(APQ): None")
+
+    if proposal_metrics["SPQ"] is not None:
+        print(
+            f"提出Proposal平均品質(SPQ): "
+            f"{proposal_metrics['SPQ']:.3f}"
+        )
+    else:
+        print("提出Proposal平均品質(SPQ): None")
+
+    if proposal_metrics["PAR"] is not None:
+        print(
+            f"Proposal採択率 (PAR): "
+            f"{proposal_metrics['PAR']:.3f}"
+        )
+    else:
+        print("Proposal採択率 (PAR): None")
+
+    print(
+        f"採択Proposal品質合計(TAQ): "
+        f"{proposal_metrics['TAQ']:.3f}"
+    )
+
+    print(
+        f"最低投票数不足による不採択: "
+        f"{proposal_metrics['rejected_insufficient_votes']}"
+    )
+
+    print(
+        f"賛成率不足による不採択: "
+        f"{proposal_metrics['rejected_insufficient_approval']}"
+    )
+
+    print(
+        f"投票期間中のProposal数: "
+        f"{proposal_metrics['open_count']}"
     )
 
     print()
@@ -243,6 +315,94 @@ def main():
     )
     print(
         f"生成Passport数: {len(passport_history)}"
+    )
+
+    # ==========================================
+    # Proposal結果をCSVに保存
+    # ==========================================
+
+    proposal_output_path = (
+        "results/proposals/proposal_details.csv"
+    )
+
+    os.makedirs(
+        os.path.dirname(proposal_output_path),
+        exist_ok=True,
+    )
+
+    with open(
+        proposal_output_path,
+        "w",
+        newline="",
+        encoding="utf-8",
+    ) as file:
+
+        writer = csv.writer(file)
+        writer.writerow([
+            "proposal_id",
+            "agent_id",
+            "created_step",
+            "relevance",
+            "feasibility",
+            "benefit",
+            "PQS",
+            "total_votes",
+            "yes_votes",
+            "no_votes",
+            "approval_rate",
+            "status",
+            "rejection_reason",
+        ])
+
+        for proposal in proposals:
+
+            writer.writerow([
+                proposal.proposal_id,
+                proposal.agent_id,
+                proposal.created_step,
+                proposal.relevance,
+                proposal.feasibility,
+                proposal.benefit,
+                proposal.quality,
+                proposal.total_votes,
+                proposal.yes_votes,
+                proposal.no_votes,
+                proposal.approval_rate,
+                proposal.status,
+                proposal.rejection_reason,
+            ])
+
+    print(
+        f"Proposal詳細を{proposal_output_path}に保存しました。"
+    )
+
+    # ==========================================
+    # Proposal結果をJSONに保存
+    # ==========================================
+
+    metrics_output_path = (
+        "results/proposals/proposal_metrics.csv"
+    )
+
+    with open(
+        metrics_output_path,
+        "w",
+        newline="",
+        encoding="utf-8",
+    ) as file:
+
+        writer = csv.writer(file)
+
+        writer.writerow(
+            list(proposal_metrics.keys())
+        )
+
+        writer.writerow(
+            list(proposal_metrics.values())
+        )
+
+    print(
+        f"Proposal評価指標を{metrics_output_path}に保存しました。"
     )
 
 

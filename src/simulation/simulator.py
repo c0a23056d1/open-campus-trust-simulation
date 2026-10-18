@@ -21,14 +21,29 @@ from src.simulation.behavior import (
     calculate_login_probability,
 )
 
-from src.simulation.permission import update_stamp_permissions
+from src.simulation.permission import update_permissions
 
 from src.simulation.behavior import calculate_vote_probability
 from src.models.issue import Issue
 from config.settings import ISSUE_TEMPLATES
 from src.simulation.behavior import choose_vote_option
 
-from config.settings import PROPOSAL_TEMPLATES
+from src.simulation.proposal_generator import (
+    generate_proposal,
+)
+
+from src.simulation.proposal_voting import (
+    cast_proposal_vote,
+    finalize_proposal,
+)
+
+from src.evaluation.proposal_metrics import (
+    calculate_proposal_metrics,
+)
+
+from config.settings import (
+    PROPOSAL_VOTING_DURATION,
+)
 
 def update_trust_passports(
     agents,
@@ -37,19 +52,20 @@ def update_trust_passports(
     passport_history,
     total_labs,
     community_start_step,
+    permission_method="Stamp",
+    permission_thresholds=None,
 ):
     """
-    指定Step時点の全AgentのTrust Passportを生成する
+    各Step終了時にTrust Passportを生成し、
+    権限制御方式に応じて権限を更新する。
     """
 
-    # ActivityLogを辞書形式に変換
     trust_logs = [
         asdict(log)
         for log in activity_logs
         if log.agent_id != "SYSTEM"
     ]
 
-    # AgentごとにTrust Passportを生成
     for agent in agents:
 
         passport = generate_passport(
@@ -62,10 +78,37 @@ def update_trust_passports(
 
         passport_history.append(passport)
 
+        # Trust方式のみPassportから権限制御
+        if permission_method in ("PT", "CT", "Multi"):
+            unlocked_permissions = update_permissions(
+                agent=agent,
+                method=permission_method,
+                passport=passport,
+                thresholds=permission_thresholds,
+            )
+
+            for permission in unlocked_permissions:
+
+                create_activity_log(
+                    logs=activity_logs,
+                    agent_id=agent.agent_id,
+                    step=current_step,
+                    phase=(
+                        "open_campus"
+                        if current_step < community_start_step
+                        else "community"
+                    ),
+                    action=f"unlocked_{permission}",
+                    target=permission,
+                    value=True,
+                )
+
 def run_open_campus_simulation(
     agents,
     labs,
     oc_steps,
+    permission_method="Stamp",
+    permission_thresholds=None,
 ):
     """
     Open Campus Phaseを実行する。
@@ -162,7 +205,29 @@ def run_open_campus_simulation(
                     # スタンプ数に基づく権限制御
                     # ------------------------------
 
-                    unlocked_permissions = update_stamp_permissions(agent)
+                    # unlocked_permissions = (
+                    #     update_permissions(
+                    #         agent=agent,
+                    #         method="Stamp",
+                    #     )
+                    #     if permission_method == "Stamp"
+                    #     else []
+                    # )
+                    if permission_method == "Stamp":
+
+                        unlocked_permissions = update_permissions(
+                            agent=agent,
+                            method="Stamp",
+                        )
+
+                    else:
+
+                        unlocked_permissions = []
+
+                        # 全方式共通：Stamp 1個でChat解放
+                        if agent.stamp_count >= 1 and not agent.chat_permission:
+                            agent.chat_permission = True
+                            unlocked_permissions.append("chat")
 
                     for permission in unlocked_permissions:
 
@@ -241,6 +306,8 @@ def run_open_campus_simulation(
             passport_history=passport_history,
             total_labs=len(labs),
             community_start_step=oc_steps + 1,
+            permission_method=permission_method,
+            permission_thresholds=permission_thresholds,
         )
 
     return environment, activity_logs, passport_history
@@ -375,6 +442,9 @@ def run_community_simulation(
     passport_history,
     total_labs,
     community_start_step,
+    permission_method="Stamp",
+    permission_thresholds=None,
+    return_proposal_results=False,
 ):
     current_issue = None
     current_task = None
@@ -461,7 +531,35 @@ def run_community_simulation(
                 action="login_community",
             )
 
-            action = choose_community_action(agent, environment)
+            # ==========================================
+            # Proposal提出締め切りの判定
+            # ==========================================
+
+            community_end_step = (
+                start_step + community_steps - 1
+            )
+
+            # 投票期間終了後の採択判定まで完了できるようにする
+            proposal_submission_deadline = (
+                community_end_step
+                - PROPOSAL_VOTING_DURATION
+                - 1
+            )
+
+            proposal_submission_open = (
+                current_step <= proposal_submission_deadline
+            )
+
+            # ============================================
+            # Community行動選択
+            # ============================================
+
+            action = choose_community_action(
+                agent=agent,
+                environment=environment,
+                proposals=proposals,
+                proposal_submission_open=proposal_submission_open
+            )
 
             if action == "no_action":
                 create_activity_log(
@@ -659,45 +757,128 @@ def run_community_simulation(
             elif action == "proposal":
 
                 if not agent.proposal_permission:
-                    continue
+                    raise RuntimeError(
+                        f"{agent.agent_id}にはProposal権限がありません"
+                    )
 
-                # まだ提案していないテーマを抽出
-                available_topics = [
-                    topic
-                    for topic in PROPOSAL_TEMPLATES
-                    if topic not in agent.proposed_topics
+                proposal_id = (
+                    f"PROPOSAL_{len(proposals) + 1:04d}"
+                )
+
+                # Agentの潜在特性からPQSを生成
+                proposal = generate_proposal(
+                    agent=agent,
+                    proposal_id=proposal_id,
+                    current_step=current_step,
+                )
+
+                proposals.append(proposal)
+
+                create_activity_log(
+                    logs=activity_logs,
+                    agent_id=agent.agent_id,
+                    step=current_step,
+                    phase="community",
+                    action="proposal",
+                    target=proposal_id,
+                    value=proposal.quality,
+                )
+
+                check_task_completion(
+                    agent=agent,
+                    action="proposal",
+                    current_task=current_task,
+                    current_step=current_step,
+                    activity_logs=activity_logs,
+                )
+
+                continue
+
+            if action == "vote_proposal":
+
+                if not agent.vote_permission:
+                    raise RuntimeError(
+                        f"{agent.agent_id}にはVote権限がありません"
+                    )
+
+                # 投票可能なProposalを取得
+                available_proposals = [
+                    proposal
+                    for proposal in proposals
+                    if proposal.is_voting_open(
+                        current_step,
+                        PROPOSAL_VOTING_DURATION,
+                    )
+                    and agent.agent_id not in proposal.votes
                 ]
 
-                if available_topics:
-
-                    proposal_topic = random.choice(
-                        available_topics
+                if not available_proposals:
+                    raise RuntimeError(
+                        "投票可能なProposalがありません"
                     )
 
-                    agent.proposed_topics.add(
-                        proposal_topic
+                # 初期モデルでは候補から一様にランダム選択
+                target_proposal = random.choice(
+                    available_proposals
+                )
+
+                result = cast_proposal_vote(
+                    agent=agent,
+                    proposal=target_proposal,
+                    current_step=current_step,
+                )
+
+                if result is None:
+                    raise RuntimeError(
+                        "Proposalへの投票に失敗しました"
                     )
 
-                    proposal_id = (
-                        f"PROPOSAL_{len(proposals) + 1:03d}"
-                    )
+                create_activity_log(
+                    logs=activity_logs,
+                    agent_id=agent.agent_id,
+                    step=current_step,
+                    phase="community",
+                    action="vote_proposal",
+                    target=target_proposal.proposal_id,
+                    value="yes" if result["support"] else "no",
+                )
 
-                    proposals.append({
-                        "proposal_id": proposal_id,
-                        "agent_id": agent.agent_id,
-                        "topic": proposal_topic,
-                        "step": current_step,
-                    })
+                check_task_completion(
+                    agent=agent,
+                    action="vote_proposal",
+                    current_task=current_task,
+                    current_step=current_step,
+                    activity_logs=activity_logs,
+                )
 
-                    create_activity_log(
-                        logs=activity_logs,
-                        agent_id=agent.agent_id,
-                        step=current_step,
-                        phase="community",
-                        action="proposal",
-                        target=proposal_id,
-                        value=proposal_topic,
-                    )
+                continue
+
+        # ===========================================
+        # Proposalの採択判定
+        # ===========================================
+        for proposal in proposals:
+            if proposal.status != "open":
+                continue
+
+            old_status = proposal.status
+
+            new_status = finalize_proposal(
+                proposal=proposal,
+                current_step=current_step,
+            )
+
+            if old_status == "open" and new_status != "open":
+
+                create_activity_log(
+                    logs=activity_logs,
+                    agent_id="SYSTEM",
+                    step=current_step,
+                    phase="community",
+                    action="proposal_finalized",
+                    target=proposal.proposal_id,
+                    value=new_status,
+                )
+
         # このStep終了時点のTrust Passportを生成
         update_trust_passports(
             agents=agents,
@@ -706,7 +887,18 @@ def run_community_simulation(
             passport_history=passport_history,
             total_labs=total_labs,
             community_start_step=community_start_step,
+            permission_method=permission_method,
+            permission_thresholds=permission_thresholds,
         )
+
+    # ===========================================
+    # Community終了時のProposalの集計
+    # ===========================================
+    proposal_metrics = calculate_proposal_metrics(proposals)
+
+    # Proposal結果を取得したい場合
+    if return_proposal_results:
+        return activity_logs, proposals, proposal_metrics
 
     return activity_logs
 

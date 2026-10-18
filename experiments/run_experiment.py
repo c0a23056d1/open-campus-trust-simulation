@@ -29,6 +29,11 @@ from src.simulation.simulator import (
 
 from collections import Counter
 
+# PERMISSION_METHOD = "Stamp"
+# PERMISSION_METHOD = "PT"
+# PERMISSION_METHOD = "CT"
+PERMISSION_METHOD = "Multi"
+
 
 def main():
 
@@ -64,6 +69,7 @@ def main():
             agents=agents,
             labs=LABS,
             oc_steps=OC_STEPS,
+            permission_method=PERMISSION_METHOD,
         )
     )
 
@@ -82,6 +88,7 @@ def main():
             passport_history=passport_history,
             total_labs=len(LABS),
             community_start_step=OC_STEPS + 1,
+            permission_method=PERMISSION_METHOD,
             return_proposal_results=True,
         )
     )

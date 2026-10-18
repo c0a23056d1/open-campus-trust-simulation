@@ -143,6 +143,7 @@ def choose_community_action(
     agent: Agent,
     environment,
     proposals=None,
+    proposal_submission_open=True
 ) -> str:
     """
     Community Phaseで実行する
@@ -227,7 +228,10 @@ def choose_community_action(
     # Proposal提出
     # ============================================
 
-    if agent.proposal_permission:
+    if (
+        agent.proposal_permission
+        and proposal_submission_open
+    ):
 
         actions.append("proposal")
 

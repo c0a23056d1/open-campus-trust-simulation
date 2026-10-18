@@ -21,7 +21,7 @@ from src.simulation.behavior import (
     calculate_login_probability,
 )
 
-from src.simulation.permission import update_stamp_permissions
+from src.simulation.permission import update_permissions
 
 from src.simulation.behavior import calculate_vote_probability
 from src.models.issue import Issue
@@ -52,19 +52,20 @@ def update_trust_passports(
     passport_history,
     total_labs,
     community_start_step,
+    permission_method="Stamp",
+    permission_thresholds=None,
 ):
     """
-    指定Step時点の全AgentのTrust Passportを生成する
+    各Step終了時にTrust Passportを生成し、
+    権限制御方式に応じて権限を更新する。
     """
 
-    # ActivityLogを辞書形式に変換
     trust_logs = [
         asdict(log)
         for log in activity_logs
         if log.agent_id != "SYSTEM"
     ]
 
-    # AgentごとにTrust Passportを生成
     for agent in agents:
 
         passport = generate_passport(
@@ -77,10 +78,37 @@ def update_trust_passports(
 
         passport_history.append(passport)
 
+        # Trust方式のみPassportから権限制御
+        if permission_method in ("PT", "CT", "Multi"):
+            unlocked_permissions = update_permissions(
+                agent=agent,
+                method=permission_method,
+                passport=passport,
+                thresholds=permission_thresholds,
+            )
+
+            for permission in unlocked_permissions:
+
+                create_activity_log(
+                    logs=activity_logs,
+                    agent_id=agent.agent_id,
+                    step=current_step,
+                    phase=(
+                        "open_campus"
+                        if current_step < community_start_step
+                        else "community"
+                    ),
+                    action=f"unlocked_{permission}",
+                    target=permission,
+                    value=True,
+                )
+
 def run_open_campus_simulation(
     agents,
     labs,
     oc_steps,
+    permission_method="Stamp",
+    permission_thresholds=None,
 ):
     """
     Open Campus Phaseを実行する。
@@ -177,7 +205,29 @@ def run_open_campus_simulation(
                     # スタンプ数に基づく権限制御
                     # ------------------------------
 
-                    unlocked_permissions = update_stamp_permissions(agent)
+                    # unlocked_permissions = (
+                    #     update_permissions(
+                    #         agent=agent,
+                    #         method="Stamp",
+                    #     )
+                    #     if permission_method == "Stamp"
+                    #     else []
+                    # )
+                    if permission_method == "Stamp":
+
+                        unlocked_permissions = update_permissions(
+                            agent=agent,
+                            method="Stamp",
+                        )
+
+                    else:
+
+                        unlocked_permissions = []
+
+                        # 全方式共通：Stamp 1個でChat解放
+                        if agent.stamp_count >= 1 and not agent.chat_permission:
+                            agent.chat_permission = True
+                            unlocked_permissions.append("chat")
 
                     for permission in unlocked_permissions:
 
@@ -256,6 +306,8 @@ def run_open_campus_simulation(
             passport_history=passport_history,
             total_labs=len(labs),
             community_start_step=oc_steps + 1,
+            permission_method=permission_method,
+            permission_thresholds=permission_thresholds,
         )
 
     return environment, activity_logs, passport_history
@@ -390,6 +442,8 @@ def run_community_simulation(
     passport_history,
     total_labs,
     community_start_step,
+    permission_method="Stamp",
+    permission_thresholds=None,
     return_proposal_results=False,
 ):
     current_issue = None
@@ -477,10 +531,34 @@ def run_community_simulation(
                 action="login_community",
             )
 
+            # ==========================================
+            # Proposal提出締め切りの判定
+            # ==========================================
+
+            community_end_step = (
+                start_step + community_steps - 1
+            )
+
+            # 投票期間終了後の採択判定まで完了できるようにする
+            proposal_submission_deadline = (
+                community_end_step
+                - PROPOSAL_VOTING_DURATION
+                - 1
+            )
+
+            proposal_submission_open = (
+                current_step <= proposal_submission_deadline
+            )
+
+            # ============================================
+            # Community行動選択
+            # ============================================
+
             action = choose_community_action(
                 agent=agent,
                 environment=environment,
                 proposals=proposals,
+                proposal_submission_open=proposal_submission_open
             )
 
             if action == "no_action":
@@ -809,6 +887,8 @@ def run_community_simulation(
             passport_history=passport_history,
             total_labs=total_labs,
             community_start_step=community_start_step,
+            permission_method=permission_method,
+            permission_thresholds=permission_thresholds,
         )
 
     # ===========================================

@@ -15,12 +15,12 @@
   "issue_vote_count": 27,
   "proposal_vote_count": 440,
   "submitted_count": 49,
-  "APC": 14,
-  "APQ": 0.6475263684137332,
+  "APC": 15,
+  "APQ": 0.6541466948789201,
   "SPQ": 0.5475509168933697,
-  "PAR": 0.2857142857142857,
-  "TAQ": 9.065369157792265,
+  "PAR": 0.30612244897959184,
+  "TAQ": 9.812200423183802,
   "rejected_insufficient_votes": 0,
-  "rejected_insufficient_approval": 35,
+  "rejected_insufficient_approval": 34,
   "open_count": 0
 }

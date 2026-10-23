@@ -14,7 +14,7 @@ TRUST_THRESHOLDS = {
     "Multi": {
         "vote_pt": 0.6,
         "vote_ct": 0.4,
-        "proposal_ct": 0.7,
+        "proposal_rt": 0.6,
         "proposal_gt": 0.5,
     },
 }
@@ -112,7 +112,7 @@ def update_trust_permissions(
             and passport["contribution"] >= thresholds["vote_ct"]
         )
         proposal_condition = (
-            passport["contribution"] >= thresholds["proposal_ct"]
+            passport["reliability"] >= thresholds["proposal_rt"]
             and passport["governance"] >= thresholds["proposal_gt"]
         )
 

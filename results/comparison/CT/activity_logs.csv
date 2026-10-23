@@ -1872,7 +1872,7 @@ LOG_001870,A037,13,community,reply,community,
 LOG_001871,A038,13,community,login_community,,
 LOG_001872,A038,13,community,reply,community,
 LOG_001873,A040,13,community,login_community,,
-LOG_001874,A040,13,community,vote_proposal,PROPOSAL_0003,yes
+LOG_001874,A040,13,community,vote_proposal,PROPOSAL_0003,no
 LOG_001875,A041,13,community,login_community,,
 LOG_001876,A041,13,community,reply,community,
 LOG_001877,A042,13,community,login_community,,
@@ -1953,7 +1953,7 @@ LOG_001951,A022,14,community,reply,community,
 LOG_001952,A026,14,community,login_community,,
 LOG_001953,A026,14,community,proposal,PROPOSAL_0009,0.5389867040359833
 LOG_001954,A027,14,community,login_community,,
-LOG_001955,A027,14,community,vote_proposal,PROPOSAL_0007,yes
+LOG_001955,A027,14,community,vote_proposal,PROPOSAL_0007,no
 LOG_001956,A028,14,community,login_community,,
 LOG_001957,A028,14,community,vote_proposal,PROPOSAL_0008,yes
 LOG_001958,A030,14,community,login_community,,
@@ -2019,7 +2019,7 @@ LOG_002017,A090,14,community,vote_proposal,PROPOSAL_0002,no
 LOG_002018,A091,14,community,login_community,,
 LOG_002019,A091,14,community,vote_proposal,PROPOSAL_0003,no
 LOG_002020,A092,14,community,login_community,,
-LOG_002021,A092,14,community,vote_proposal,PROPOSAL_0007,yes
+LOG_002021,A092,14,community,vote_proposal,PROPOSAL_0007,no
 LOG_002022,A093,14,community,login_community,,
 LOG_002023,A093,14,community,vote_proposal,PROPOSAL_0002,no
 LOG_002024,A094,14,community,login_community,,
@@ -2108,7 +2108,7 @@ LOG_002106,A078,15,community,no_action,,
 LOG_002107,A079,15,community,login_community,,
 LOG_002108,A079,15,community,view_issue,ISSUE_001,
 LOG_002109,A083,15,community,login_community,,
-LOG_002110,A083,15,community,vote_proposal,PROPOSAL_0002,no
+LOG_002110,A083,15,community,vote_proposal,PROPOSAL_0002,yes
 LOG_002111,A086,15,community,login_community,,
 LOG_002112,A086,15,community,reply,community,
 LOG_002113,A089,15,community,login_community,,
@@ -2180,7 +2180,7 @@ LOG_002178,A057,16,community,chat,community,
 LOG_002179,A058,16,community,login_community,,
 LOG_002180,A058,16,community,view_issue,ISSUE_001,
 LOG_002181,A063,16,community,login_community,,
-LOG_002182,A063,16,community,vote_proposal,PROPOSAL_0010,no
+LOG_002182,A063,16,community,vote_proposal,PROPOSAL_0010,yes
 LOG_002183,A065,16,community,login_community,,
 LOG_002184,A065,16,community,view_issue,ISSUE_001,
 LOG_002185,A067,16,community,login_community,,
@@ -2242,7 +2242,7 @@ LOG_002240,A022,17,community,proposal,PROPOSAL_0014,0.47133773991500555
 LOG_002241,A026,17,community,login_community,,
 LOG_002242,A026,17,community,vote_proposal,PROPOSAL_0005,no
 LOG_002243,A028,17,community,login_community,,
-LOG_002244,A028,17,community,vote_proposal,PROPOSAL_0001,yes
+LOG_002244,A028,17,community,vote_proposal,PROPOSAL_0001,no
 LOG_002245,A029,17,community,login_community,,
 LOG_002246,A029,17,community,vote_proposal,PROPOSAL_0012,no
 LOG_002247,A030,17,community,login_community,,
@@ -2442,7 +2442,7 @@ LOG_002440,A003,19,community,chat,community,
 LOG_002441,A005,19,community,login_community,,
 LOG_002442,A005,19,community,chat,community,
 LOG_002443,A007,19,community,login_community,,
-LOG_002444,A007,19,community,vote_proposal,PROPOSAL_0011,yes
+LOG_002444,A007,19,community,vote_proposal,PROPOSAL_0011,no
 LOG_002445,A008,19,community,login_community,,
 LOG_002446,A008,19,community,vote_proposal,PROPOSAL_0016,no
 LOG_002447,A010,19,community,login_community,,
@@ -2496,7 +2496,7 @@ LOG_002494,A049,19,community,vote_proposal,PROPOSAL_0009,no
 LOG_002495,A050,19,community,login_community,,
 LOG_002496,A050,19,community,reply,community,
 LOG_002497,A054,19,community,login_community,,
-LOG_002498,A054,19,community,vote_proposal,PROPOSAL_0011,yes
+LOG_002498,A054,19,community,vote_proposal,PROPOSAL_0011,no
 LOG_002499,A056,19,community,login_community,,
 LOG_002500,A056,19,community,view_issue,ISSUE_001,
 LOG_002501,A057,19,community,login_community,,
@@ -2508,7 +2508,7 @@ LOG_002506,A063,19,community,chat,community,
 LOG_002507,A064,19,community,login_community,,
 LOG_002508,A064,19,community,vote_proposal,PROPOSAL_0012,no
 LOG_002509,A066,19,community,login_community,,
-LOG_002510,A066,19,community,vote_proposal,PROPOSAL_0013,no
+LOG_002510,A066,19,community,vote_proposal,PROPOSAL_0013,yes
 LOG_002511,A067,19,community,login_community,,
 LOG_002512,A067,19,community,no_action,,
 LOG_002513,A069,19,community,login_community,,
@@ -2516,7 +2516,7 @@ LOG_002514,A069,19,community,vote,ISSUE_001,Design
 LOG_002515,A070,19,community,login_community,,
 LOG_002516,A070,19,community,chat,community,
 LOG_002517,A071,19,community,login_community,,
-LOG_002518,A071,19,community,vote_proposal,PROPOSAL_0016,yes
+LOG_002518,A071,19,community,vote_proposal,PROPOSAL_0016,no
 LOG_002519,A072,19,community,login_community,,
 LOG_002520,A072,19,community,vote_proposal,PROPOSAL_0012,no
 LOG_002521,A073,19,community,login_community,,
@@ -2635,7 +2635,7 @@ LOG_002633,A087,20,community,vote_proposal,PROPOSAL_0011,no
 LOG_002634,A088,20,community,login_community,,
 LOG_002635,A088,20,community,vote_proposal,PROPOSAL_0012,no
 LOG_002636,A090,20,community,login_community,,
-LOG_002637,A090,20,community,vote_proposal,PROPOSAL_0010,no
+LOG_002637,A090,20,community,vote_proposal,PROPOSAL_0010,yes
 LOG_002638,A091,20,community,login_community,,
 LOG_002639,A091,20,community,chat,community,
 LOG_002640,A093,20,community,login_community,,
@@ -2659,7 +2659,7 @@ LOG_002657,A013,21,community,complete_task,TASK_001,reply
 LOG_002658,A014,21,community,login_community,,
 LOG_002659,A014,21,community,chat,community,
 LOG_002660,A017,21,community,login_community,,
-LOG_002661,A017,21,community,vote_proposal,PROPOSAL_0017,no
+LOG_002661,A017,21,community,vote_proposal,PROPOSAL_0017,yes
 LOG_002662,A020,21,community,login_community,,
 LOG_002663,A020,21,community,chat,community,
 LOG_002664,A022,21,community,login_community,,
@@ -2691,7 +2691,7 @@ LOG_002689,A037,21,community,view_issue,ISSUE_002,
 LOG_002690,A038,21,community,login_community,,
 LOG_002691,A038,21,community,proposal,PROPOSAL_0020,0.46167712799925703
 LOG_002692,A040,21,community,login_community,,
-LOG_002693,A040,21,community,vote_proposal,PROPOSAL_0016,yes
+LOG_002693,A040,21,community,vote_proposal,PROPOSAL_0016,no
 LOG_002694,A041,21,community,login_community,,
 LOG_002695,A041,21,community,vote_proposal,PROPOSAL_0013,no
 LOG_002696,A042,21,community,login_community,,
@@ -2750,7 +2750,7 @@ LOG_002748,A098,21,community,reply,community,
 LOG_002749,A098,21,community,complete_task,TASK_001,reply
 LOG_002750,A100,21,community,login_community,,
 LOG_002751,A100,21,community,vote_proposal,PROPOSAL_0014,no
-LOG_002752,SYSTEM,21,community,proposal_finalized,PROPOSAL_0010,rejected
+LOG_002752,SYSTEM,21,community,proposal_finalized,PROPOSAL_0010,accepted
 LOG_002753,A002,22,community,login_community,,
 LOG_002754,A002,22,community,vote_proposal,PROPOSAL_0020,no
 LOG_002755,A004,22,community,login_community,,
@@ -2841,7 +2841,7 @@ LOG_002839,A073,22,community,view_issue,ISSUE_002,
 LOG_002840,A074,22,community,login_community,,
 LOG_002841,A074,22,community,no_action,,
 LOG_002842,A076,22,community,login_community,,
-LOG_002843,A076,22,community,vote_proposal,PROPOSAL_0020,yes
+LOG_002843,A076,22,community,vote_proposal,PROPOSAL_0020,no
 LOG_002844,A077,22,community,login_community,,
 LOG_002845,A077,22,community,view_issue,ISSUE_002,
 LOG_002846,A078,22,community,login_community,,
@@ -2876,14 +2876,14 @@ LOG_002874,A002,23,community,login_community,,
 LOG_002875,A002,23,community,reply,community,
 LOG_002876,A002,23,community,complete_task,TASK_001,reply
 LOG_002877,A007,23,community,login_community,,
-LOG_002878,A007,23,community,vote_proposal,PROPOSAL_0021,yes
+LOG_002878,A007,23,community,vote_proposal,PROPOSAL_0021,no
 LOG_002879,A008,23,community,login_community,,
 LOG_002880,A008,23,community,reply,community,
 LOG_002881,A008,23,community,complete_task,TASK_001,reply
 LOG_002882,A009,23,community,login_community,,
 LOG_002883,A009,23,community,no_action,,
 LOG_002884,A010,23,community,login_community,,
-LOG_002885,A010,23,community,vote_proposal,PROPOSAL_0020,yes
+LOG_002885,A010,23,community,vote_proposal,PROPOSAL_0020,no
 LOG_002886,A011,23,community,login_community,,
 LOG_002887,A011,23,community,express_opinion,ISSUE_002,
 LOG_002888,A012,23,community,login_community,,
@@ -2893,7 +2893,7 @@ LOG_002891,A014,23,community,vote,ISSUE_002,丼もの
 LOG_002892,A017,23,community,login_community,,
 LOG_002893,A017,23,community,chat,community,
 LOG_002894,A018,23,community,login_community,,
-LOG_002895,A018,23,community,vote_proposal,PROPOSAL_0023,yes
+LOG_002895,A018,23,community,vote_proposal,PROPOSAL_0023,no
 LOG_002896,A019,23,community,login_community,,
 LOG_002897,A019,23,community,reply,community,
 LOG_002898,A019,23,community,complete_task,TASK_001,reply
@@ -2957,16 +2957,16 @@ LOG_002955,A075,23,community,complete_task,TASK_001,reply
 LOG_002956,A076,23,community,login_community,,
 LOG_002957,A076,23,community,view_issue,ISSUE_002,
 LOG_002958,A080,23,community,login_community,,
-LOG_002959,A080,23,community,vote_proposal,PROPOSAL_0023,yes
+LOG_002959,A080,23,community,vote_proposal,PROPOSAL_0023,no
 LOG_002960,A081,23,community,login_community,,
 LOG_002961,A081,23,community,reply,community,
 LOG_002962,A081,23,community,complete_task,TASK_001,reply
 LOG_002963,A082,23,community,login_community,,
 LOG_002964,A082,23,community,chat,community,
 LOG_002965,A088,23,community,login_community,,
-LOG_002966,A088,23,community,vote_proposal,PROPOSAL_0016,yes
+LOG_002966,A088,23,community,vote_proposal,PROPOSAL_0016,no
 LOG_002967,A091,23,community,login_community,,
-LOG_002968,A091,23,community,vote_proposal,PROPOSAL_0016,yes
+LOG_002968,A091,23,community,vote_proposal,PROPOSAL_0016,no
 LOG_002969,A094,23,community,login_community,,
 LOG_002970,A094,23,community,no_action,,
 LOG_002971,A095,23,community,login_community,,
@@ -2988,7 +2988,7 @@ LOG_002986,A011,24,community,chat,community,
 LOG_002987,A013,24,community,login_community,,
 LOG_002988,A013,24,community,chat,community,
 LOG_002989,A014,24,community,login_community,,
-LOG_002990,A014,24,community,vote_proposal,PROPOSAL_0021,yes
+LOG_002990,A014,24,community,vote_proposal,PROPOSAL_0021,no
 LOG_002991,A017,24,community,login_community,,
 LOG_002992,A017,24,community,vote_proposal,PROPOSAL_0024,no
 LOG_002993,A018,24,community,login_community,,
@@ -2996,13 +2996,13 @@ LOG_002994,A018,24,community,vote_proposal,PROPOSAL_0018,no
 LOG_002995,A020,24,community,login_community,,
 LOG_002996,A020,24,community,express_opinion,ISSUE_002,
 LOG_002997,A021,24,community,login_community,,
-LOG_002998,A021,24,community,vote_proposal,PROPOSAL_0019,yes
+LOG_002998,A021,24,community,vote_proposal,PROPOSAL_0019,no
 LOG_002999,A022,24,community,login_community,,
 LOG_003000,A022,24,community,vote_proposal,PROPOSAL_0024,yes
 LOG_003001,A024,24,community,login_community,,
 LOG_003002,A024,24,community,view_issue,ISSUE_002,
 LOG_003003,A026,24,community,login_community,,
-LOG_003004,A026,24,community,vote_proposal,PROPOSAL_0017,no
+LOG_003004,A026,24,community,vote_proposal,PROPOSAL_0017,yes
 LOG_003005,A028,24,community,login_community,,
 LOG_003006,A028,24,community,reply,community,
 LOG_003007,A028,24,community,complete_task,TASK_001,reply
@@ -3136,7 +3136,7 @@ LOG_003134,A040,25,community,chat,community,
 LOG_003135,A042,25,community,login_community,,
 LOG_003136,A042,25,community,view_issue,ISSUE_003,
 LOG_003137,A044,25,community,login_community,,
-LOG_003138,A044,25,community,vote_proposal,PROPOSAL_0023,yes
+LOG_003138,A044,25,community,vote_proposal,PROPOSAL_0023,no
 LOG_003139,A047,25,community,login_community,,
 LOG_003140,A047,25,community,reply,community,
 LOG_003141,A047,25,community,complete_task,TASK_001,reply
@@ -3278,7 +3278,7 @@ LOG_003276,A054,26,community,view_issue,ISSUE_003,
 LOG_003277,A056,26,community,login_community,,
 LOG_003278,A056,26,community,chat,community,
 LOG_003279,A058,26,community,login_community,,
-LOG_003280,A058,26,community,vote_proposal,PROPOSAL_0021,yes
+LOG_003280,A058,26,community,vote_proposal,PROPOSAL_0021,no
 LOG_003281,A061,26,community,login_community,,
 LOG_003282,A061,26,community,view_issue,ISSUE_003,
 LOG_003283,A065,26,community,login_community,,
@@ -3302,7 +3302,7 @@ LOG_003300,A081,26,community,view_issue,ISSUE_003,
 LOG_003301,A087,26,community,login_community,,
 LOG_003302,A087,26,community,reply,community,
 LOG_003303,A090,26,community,login_community,,
-LOG_003304,A090,26,community,vote_proposal,PROPOSAL_0027,yes
+LOG_003304,A090,26,community,vote_proposal,PROPOSAL_0027,no
 LOG_003305,A091,26,community,login_community,,
 LOG_003306,A091,26,community,view_issue,ISSUE_003,
 LOG_003307,A092,26,community,login_community,,
@@ -3386,7 +3386,7 @@ LOG_003384,A041,27,community,no_action,,
 LOG_003385,A042,27,community,login_community,,
 LOG_003386,A042,27,community,no_action,,
 LOG_003387,A044,27,community,login_community,,
-LOG_003388,A044,27,community,vote_proposal,PROPOSAL_0029,yes
+LOG_003388,A044,27,community,vote_proposal,PROPOSAL_0029,no
 LOG_003389,A047,27,community,login_community,,
 LOG_003390,A047,27,community,vote_proposal,PROPOSAL_0023,yes
 LOG_003391,A049,27,community,login_community,,
@@ -3468,9 +3468,9 @@ LOG_003466,A026,28,community,complete_task,TASK_002,reply
 LOG_003467,A027,28,community,login_community,,
 LOG_003468,A027,28,community,vote_proposal,PROPOSAL_0028,yes
 LOG_003469,A028,28,community,login_community,,
-LOG_003470,A028,28,community,vote_proposal,PROPOSAL_0027,yes
+LOG_003470,A028,28,community,vote_proposal,PROPOSAL_0027,no
 LOG_003471,A029,28,community,login_community,,
-LOG_003472,A029,28,community,vote_proposal,PROPOSAL_0031,yes
+LOG_003472,A029,28,community,vote_proposal,PROPOSAL_0031,no
 LOG_003473,A030,28,community,login_community,,
 LOG_003474,A030,28,community,no_action,,
 LOG_003475,A032,28,community,login_community,,
@@ -3530,7 +3530,7 @@ LOG_003528,A081,28,community,vote,ISSUE_003,メディア学部
 LOG_003529,A086,28,community,login_community,,
 LOG_003530,A086,28,community,chat,community,
 LOG_003531,A088,28,community,login_community,,
-LOG_003532,A088,28,community,vote_proposal,PROPOSAL_0028,no
+LOG_003532,A088,28,community,vote_proposal,PROPOSAL_0028,yes
 LOG_003533,A089,28,community,login_community,,
 LOG_003534,A089,28,community,chat,community,
 LOG_003535,A091,28,community,login_community,,
@@ -3597,7 +3597,7 @@ LOG_003595,A049,29,community,no_action,,
 LOG_003596,A050,29,community,login_community,,
 LOG_003597,A050,29,community,chat,community,
 LOG_003598,A051,29,community,login_community,,
-LOG_003599,A051,29,community,vote_proposal,PROPOSAL_0031,yes
+LOG_003599,A051,29,community,vote_proposal,PROPOSAL_0031,no
 LOG_003600,A053,29,community,login_community,,
 LOG_003601,A053,29,community,no_action,,
 LOG_003602,A054,29,community,login_community,,
@@ -3611,7 +3611,7 @@ LOG_003609,A060,29,community,no_action,,
 LOG_003610,A062,29,community,login_community,,
 LOG_003611,A062,29,community,vote_proposal,PROPOSAL_0033,no
 LOG_003612,A063,29,community,login_community,,
-LOG_003613,A063,29,community,vote_proposal,PROPOSAL_0026,yes
+LOG_003613,A063,29,community,vote_proposal,PROPOSAL_0026,no
 LOG_003614,A065,29,community,login_community,,
 LOG_003615,A065,29,community,chat,community,
 LOG_003616,A069,29,community,login_community,,
@@ -3698,13 +3698,13 @@ LOG_003696,A034,30,community,chat,community,
 LOG_003697,A036,30,community,login_community,,
 LOG_003698,A036,30,community,vote_proposal,PROPOSAL_0035,no
 LOG_003699,A038,30,community,login_community,,
-LOG_003700,A038,30,community,vote_proposal,PROPOSAL_0030,yes
+LOG_003700,A038,30,community,vote_proposal,PROPOSAL_0030,no
 LOG_003701,A040,30,community,login_community,,
 LOG_003702,A040,30,community,view_issue,ISSUE_004,
 LOG_003703,A043,30,community,login_community,,
 LOG_003704,A043,30,community,vote_proposal,PROPOSAL_0025,no
 LOG_003705,A044,30,community,login_community,,
-LOG_003706,A044,30,community,vote_proposal,PROPOSAL_0026,yes
+LOG_003706,A044,30,community,vote_proposal,PROPOSAL_0026,no
 LOG_003707,A046,30,community,login_community,,
 LOG_003708,A046,30,community,proposal,PROPOSAL_0038,0.4517830077506984
 LOG_003709,A047,30,community,login_community,,
@@ -3730,7 +3730,7 @@ LOG_003728,A062,30,community,complete_task,TASK_002,reply
 LOG_003729,A063,30,community,login_community,,
 LOG_003730,A063,30,community,view_issue,ISSUE_004,
 LOG_003731,A066,30,community,login_community,,
-LOG_003732,A066,30,community,vote_proposal,PROPOSAL_0031,yes
+LOG_003732,A066,30,community,vote_proposal,PROPOSAL_0031,no
 LOG_003733,A068,30,community,login_community,,
 LOG_003734,A068,30,community,chat,community,
 LOG_003735,A069,30,community,login_community,,
@@ -3745,7 +3745,7 @@ LOG_003743,A075,30,community,view_issue,ISSUE_004,
 LOG_003744,A076,30,community,login_community,,
 LOG_003745,A076,30,community,view_issue,ISSUE_004,
 LOG_003746,A079,30,community,login_community,,
-LOG_003747,A079,30,community,vote_proposal,PROPOSAL_0034,no
+LOG_003747,A079,30,community,vote_proposal,PROPOSAL_0034,yes
 LOG_003748,A080,30,community,login_community,,
 LOG_003749,A080,30,community,reply,community,
 LOG_003750,A080,30,community,complete_task,TASK_002,reply
@@ -3791,7 +3791,7 @@ LOG_003789,A023,31,community,reply,community,
 LOG_003790,A025,31,community,login_community,,
 LOG_003791,A025,31,community,view_issue,ISSUE_004,
 LOG_003792,A026,31,community,login_community,,
-LOG_003793,A026,31,community,vote_proposal,PROPOSAL_0037,yes
+LOG_003793,A026,31,community,vote_proposal,PROPOSAL_0037,no
 LOG_003794,A027,31,community,login_community,,
 LOG_003795,A027,31,community,reply,community,
 LOG_003796,A028,31,community,login_community,,
@@ -3812,7 +3812,7 @@ LOG_003810,A039,31,community,no_action,,
 LOG_003811,A040,31,community,login_community,,
 LOG_003812,A040,31,community,chat,community,
 LOG_003813,A041,31,community,login_community,,
-LOG_003814,A041,31,community,vote_proposal,PROPOSAL_0038,yes
+LOG_003814,A041,31,community,vote_proposal,PROPOSAL_0038,no
 LOG_003815,A042,31,community,login_community,,
 LOG_003816,A042,31,community,view_issue,ISSUE_004,
 LOG_003817,A043,31,community,login_community,,
@@ -3848,7 +3848,7 @@ LOG_003846,A070,31,community,complete_task,TASK_002,reply
 LOG_003847,A071,31,community,login_community,,
 LOG_003848,A071,31,community,view_issue,ISSUE_004,
 LOG_003849,A072,31,community,login_community,,
-LOG_003850,A072,31,community,vote_proposal,PROPOSAL_0036,no
+LOG_003850,A072,31,community,vote_proposal,PROPOSAL_0036,yes
 LOG_003851,A074,31,community,login_community,,
 LOG_003852,A074,31,community,vote_proposal,PROPOSAL_0029,no
 LOG_003853,A075,31,community,login_community,,
@@ -3874,7 +3874,7 @@ LOG_003872,A091,31,community,complete_task,TASK_002,reply
 LOG_003873,A094,31,community,login_community,,
 LOG_003874,A094,31,community,chat,community,
 LOG_003875,SYSTEM,31,community,proposal_finalized,PROPOSAL_0025,rejected
-LOG_003876,SYSTEM,31,community,proposal_finalized,PROPOSAL_0026,accepted
+LOG_003876,SYSTEM,31,community,proposal_finalized,PROPOSAL_0026,rejected
 LOG_003877,SYSTEM,31,community,proposal_finalized,PROPOSAL_0027,rejected
 LOG_003878,SYSTEM,32,community,task_ended,TASK_002,
 LOG_003879,SYSTEM,32,community,task_created,TASK_003,チャットしてみよう
@@ -3992,11 +3992,11 @@ LOG_003990,A088,32,community,vote_proposal,PROPOSAL_0033,no
 LOG_003991,A092,32,community,login_community,,
 LOG_003992,A092,32,community,view_issue,ISSUE_004,
 LOG_003993,A093,32,community,login_community,,
-LOG_003994,A093,32,community,vote_proposal,PROPOSAL_0030,yes
+LOG_003994,A093,32,community,vote_proposal,PROPOSAL_0030,no
 LOG_003995,A100,32,community,login_community,,
 LOG_003996,A100,32,community,view_issue,ISSUE_004,
 LOG_003997,SYSTEM,32,community,proposal_finalized,PROPOSAL_0028,accepted
-LOG_003998,SYSTEM,32,community,proposal_finalized,PROPOSAL_0029,accepted
+LOG_003998,SYSTEM,32,community,proposal_finalized,PROPOSAL_0029,rejected
 LOG_003999,A001,33,community,login_community,,
 LOG_004000,A001,33,community,vote_proposal,PROPOSAL_0039,yes
 LOG_004001,A002,33,community,login_community,,
@@ -4014,7 +4014,7 @@ LOG_004012,A014,33,community,vote_proposal,PROPOSAL_0034,yes
 LOG_004013,A017,33,community,login_community,,
 LOG_004014,A017,33,community,proposal,PROPOSAL_0044,0.6139938048879735
 LOG_004015,A018,33,community,login_community,,
-LOG_004016,A018,33,community,vote_proposal,PROPOSAL_0042,yes
+LOG_004016,A018,33,community,vote_proposal,PROPOSAL_0042,no
 LOG_004017,A020,33,community,login_community,,
 LOG_004018,A020,33,community,vote_proposal,PROPOSAL_0039,yes
 LOG_004019,A021,33,community,login_community,,
@@ -4045,7 +4045,7 @@ LOG_004043,A038,33,community,no_action,,
 LOG_004044,A039,33,community,login_community,,
 LOG_004045,A039,33,community,vote_proposal,PROPOSAL_0034,no
 LOG_004046,A040,33,community,login_community,,
-LOG_004047,A040,33,community,vote_proposal,PROPOSAL_0041,no
+LOG_004047,A040,33,community,vote_proposal,PROPOSAL_0041,yes
 LOG_004048,A041,33,community,login_community,,
 LOG_004049,A041,33,community,vote_proposal,PROPOSAL_0033,no
 LOG_004050,A043,33,community,login_community,,
@@ -4079,7 +4079,7 @@ LOG_004077,A072,33,community,login_community,,
 LOG_004078,A072,33,community,chat,community,
 LOG_004079,A072,33,community,complete_task,TASK_003,chat
 LOG_004080,A073,33,community,login_community,,
-LOG_004081,A073,33,community,vote_proposal,PROPOSAL_0035,yes
+LOG_004081,A073,33,community,vote_proposal,PROPOSAL_0035,no
 LOG_004082,A075,33,community,login_community,,
 LOG_004083,A075,33,community,no_action,,
 LOG_004084,A077,33,community,login_community,,
@@ -4173,11 +4173,11 @@ LOG_004171,A055,34,community,login_community,,
 LOG_004172,A055,34,community,chat,community,
 LOG_004173,A055,34,community,complete_task,TASK_003,chat
 LOG_004174,A066,34,community,login_community,,
-LOG_004175,A066,34,community,vote_proposal,PROPOSAL_0037,yes
+LOG_004175,A066,34,community,vote_proposal,PROPOSAL_0037,no
 LOG_004176,A069,34,community,login_community,,
 LOG_004177,A069,34,community,reply,community,
 LOG_004178,A072,34,community,login_community,,
-LOG_004179,A072,34,community,vote_proposal,PROPOSAL_0041,no
+LOG_004179,A072,34,community,vote_proposal,PROPOSAL_0041,yes
 LOG_004180,A073,34,community,login_community,,
 LOG_004181,A073,34,community,vote_proposal,PROPOSAL_0037,no
 LOG_004182,A074,34,community,login_community,,
@@ -4189,7 +4189,7 @@ LOG_004187,A076,34,community,login_community,,
 LOG_004188,A076,34,community,chat,community,
 LOG_004189,A076,34,community,complete_task,TASK_003,chat
 LOG_004190,A079,34,community,login_community,,
-LOG_004191,A079,34,community,vote_proposal,PROPOSAL_0043,no
+LOG_004191,A079,34,community,vote_proposal,PROPOSAL_0043,yes
 LOG_004192,A080,34,community,login_community,,
 LOG_004193,A080,34,community,proposal,PROPOSAL_0048,0.4789484534136184
 LOG_004194,A081,34,community,login_community,,
@@ -4206,7 +4206,7 @@ LOG_004204,A094,34,community,complete_task,TASK_003,chat
 LOG_004205,A100,34,community,login_community,,
 LOG_004206,A100,34,community,proposal,PROPOSAL_0049,0.5782458011064948
 LOG_004207,SYSTEM,34,community,proposal_finalized,PROPOSAL_0033,rejected
-LOG_004208,SYSTEM,34,community,proposal_finalized,PROPOSAL_0034,rejected
+LOG_004208,SYSTEM,34,community,proposal_finalized,PROPOSAL_0034,accepted
 LOG_004209,SYSTEM,35,community,issue_created,ISSUE_005,学食で食べたいメニューは？
 LOG_004210,A003,35,community,login_community,,
 LOG_004211,A003,35,community,view_issue,ISSUE_005,
@@ -4239,9 +4239,9 @@ LOG_004237,A023,35,community,reply,community,
 LOG_004238,A025,35,community,login_community,,
 LOG_004239,A025,35,community,no_action,,
 LOG_004240,A026,35,community,login_community,,
-LOG_004241,A026,35,community,vote_proposal,PROPOSAL_0048,yes
+LOG_004241,A026,35,community,vote_proposal,PROPOSAL_0048,no
 LOG_004242,A028,35,community,login_community,,
-LOG_004243,A028,35,community,vote_proposal,PROPOSAL_0041,no
+LOG_004243,A028,35,community,vote_proposal,PROPOSAL_0041,yes
 LOG_004244,A030,35,community,login_community,,
 LOG_004245,A030,35,community,reply,community,
 LOG_004246,A032,35,community,login_community,,
@@ -4315,7 +4315,7 @@ LOG_004313,A096,35,community,complete_task,TASK_003,chat
 LOG_004314,A098,35,community,login_community,,
 LOG_004315,A098,35,community,no_action,,
 LOG_004316,A100,35,community,login_community,,
-LOG_004317,A100,35,community,vote_proposal,PROPOSAL_0039,no
+LOG_004317,A100,35,community,vote_proposal,PROPOSAL_0039,yes
 LOG_004318,SYSTEM,35,community,proposal_finalized,PROPOSAL_0035,rejected
 LOG_004319,A001,36,community,login_community,,
 LOG_004320,A001,36,community,vote_proposal,PROPOSAL_0046,yes
@@ -4405,7 +4405,7 @@ LOG_004403,A093,36,community,complete_task,TASK_003,chat
 LOG_004404,SYSTEM,36,community,proposal_finalized,PROPOSAL_0036,rejected
 LOG_004405,SYSTEM,36,community,proposal_finalized,PROPOSAL_0037,rejected
 LOG_004406,SYSTEM,36,community,proposal_finalized,PROPOSAL_0038,rejected
-LOG_004407,SYSTEM,36,community,proposal_finalized,PROPOSAL_0039,rejected
+LOG_004407,SYSTEM,36,community,proposal_finalized,PROPOSAL_0039,accepted
 LOG_004408,SYSTEM,37,community,task_ended,TASK_003,
 LOG_004409,SYSTEM,37,community,task_created,TASK_004,チャットしてみよう
 LOG_004410,A002,37,community,login_community,,
@@ -4425,7 +4425,7 @@ LOG_004423,A012,37,community,complete_task,TASK_004,chat
 LOG_004424,A017,37,community,login_community,,
 LOG_004425,A017,37,community,vote_proposal,PROPOSAL_0049,yes
 LOG_004426,A018,37,community,login_community,,
-LOG_004427,A018,37,community,vote_proposal,PROPOSAL_0044,no
+LOG_004427,A018,37,community,vote_proposal,PROPOSAL_0044,yes
 LOG_004428,A022,37,community,login_community,,
 LOG_004429,A022,37,community,reply,community,
 LOG_004430,A023,37,community,login_community,,
@@ -4700,7 +4700,7 @@ LOG_004698,A058,39,community,reply,community,
 LOG_004699,A062,39,community,login_community,,
 LOG_004700,A062,39,community,vote_proposal,PROPOSAL_0049,no
 LOG_004701,A063,39,community,login_community,,
-LOG_004702,A063,39,community,vote_proposal,PROPOSAL_0048,yes
+LOG_004702,A063,39,community,vote_proposal,PROPOSAL_0048,no
 LOG_004703,A069,39,community,login_community,,
 LOG_004704,A069,39,community,vote_proposal,PROPOSAL_0047,no
 LOG_004705,A070,39,community,login_community,,
@@ -4725,7 +4725,7 @@ LOG_004723,A094,39,community,login_community,,
 LOG_004724,A094,39,community,chat,community,
 LOG_004725,A094,39,community,complete_task,TASK_004,chat
 LOG_004726,A099,39,community,login_community,,
-LOG_004727,A099,39,community,vote_proposal,PROPOSAL_0049,yes
+LOG_004727,A099,39,community,vote_proposal,PROPOSAL_0049,no
 LOG_004728,A100,39,community,login_community,,
 LOG_004729,A100,39,community,vote_proposal,PROPOSAL_0049,no
 LOG_004730,SYSTEM,39,community,proposal_finalized,PROPOSAL_0044,accepted

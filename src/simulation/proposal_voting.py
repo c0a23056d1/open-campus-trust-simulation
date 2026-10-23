@@ -22,29 +22,41 @@ def calculate_vote_score(agent) -> float:
         + 0.3 * agent.persistence
     )
 
-def decide_support(proposal, rng=None):
+
+def decide_support(agent, proposal, rng=None):
     """
-    PQSと認識誤差から賛否を決定する。
-    InterestやGovernanceは使用しない。
+    AgentのGovernance潜在特性を利用して、
+    Proposalの認識品質と賛否を決定する。
+
+    perceived_quality =
+        clip(PQS + (1 - Governance) * 認識誤差, 0, 1)
     """
 
     if rng is None:
         rng = random
 
+    # 認識誤差
     perception_error = rng.uniform(
         -PROPOSAL_PERCEPTION_NOISE,
         PROPOSAL_PERCEPTION_NOISE,
     )
 
+    # AgentのGovernance潜在特性
+    governance = agent.governance
+
+    # Governanceに応じた認識品質
     perceived_quality = clip(
-        proposal.quality + perception_error
+        proposal.quality
+        + (1.0 - governance) * perception_error
     )
 
+    # 認識品質が0.6以上なら賛成
     support = (
         perceived_quality >= PROPOSAL_SUPPORT_THRESHOLD
     )
 
     return support, perceived_quality
+
 
 def cast_proposal_vote(
         agent,
@@ -70,6 +82,7 @@ def cast_proposal_vote(
         return None
 
     support, perceived_quality = decide_support(
+        agent,
         proposal,
         rng=rng,
     )

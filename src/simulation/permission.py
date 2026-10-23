@@ -4,20 +4,21 @@
 
 TRUST_THRESHOLDS = {
     "PT": {
-        "vote": 0.6,
-        "proposal": 0.8,
+        "vote": 0.5,
+        "proposal": 0.7,
     },
     "CT": {
-        "vote": 0.4,
+        "vote": 0.5,
         "proposal": 0.7,
     },
     "Multi": {
-        "vote_pt": 0.6,
+        "vote_pt": 0.4,
         "vote_ct": 0.4,
         "proposal_rt": 0.6,
-        "proposal_gt": 0.5,
+        "proposal_gt": 0.6,
     },
 }
+
 
 # def calculate_multi_trust(passport: dict) -> float:
 #     """

@@ -515,6 +515,25 @@ def run_community_simulation(
             if not agent.chat_permission:
                 continue
 
+            # ==========================================
+            # Community離脱判定
+            # ==========================================
+            leave_probability = 0.10 * (1.0 - agent.persistence)
+
+            if random.random() < leave_probability:
+
+                agent.left_community = True
+
+                create_activity_log(
+                    logs=activity_logs,
+                    agent_id=agent.agent_id,
+                    step=current_step,
+                    phase="community",
+                    action="leave_community",
+                )
+
+                continue
+
             # Communityへのログイン確立を計算
             login_probability = calculate_login_probability(agent)
 

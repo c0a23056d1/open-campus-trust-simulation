@@ -239,30 +239,30 @@ def choose_community_action(
             calculate_proposal_probability(agent)
         )
 
-    # ============================================
-    # Proposalへの賛否投票
-    # ============================================
+    # # ============================================
+    # # Proposalへの賛否投票
+    # # ============================================
 
-    if agent.vote_permission:
+    # if agent.vote_permission:
 
-        from config.settings import PROPOSAL_VOTING_DURATION
+    #     from config.settings import PROPOSAL_VOTING_DURATION
 
-        available_proposals = [
-            proposal
-            for proposal in proposals
-            if proposal.is_voting_open(
-                environment.current_step,
-                PROPOSAL_VOTING_DURATION,
-            )
-            and agent.agent_id not in proposal.votes
-        ]
+    #     available_proposals = [
+    #         proposal
+    #         for proposal in proposals
+    #         if proposal.is_voting_open(
+    #             environment.current_step,
+    #             PROPOSAL_VOTING_DURATION,
+    #         )
+    #         and agent.agent_id not in proposal.votes
+    #     ]
 
-        if available_proposals:
+    #     if available_proposals:
 
-            actions.append("vote_proposal")
-            weights.append(
-                calculate_vote_probability(agent)
-            )
+    #         actions.append("vote_proposal")
+    #         weights.append(
+    #             calculate_vote_probability(agent)
+    #         )
 
     # ===========================================
     # 行動を一つ選択

@@ -78,6 +78,13 @@ def update_trust_passports(
 
         passport_history.append(passport)
 
+        # ============================
+        # 離脱済みAgentには新しい権限を付与しない
+        # Trust passportの計算・保存は継続
+        # ============================
+        if agent.left_community:
+            continue
+
         # Trust方式のみPassportから権限制御
         if permission_method in ("PT", "CT", "Multi"):
             unlocked_permissions = update_permissions(

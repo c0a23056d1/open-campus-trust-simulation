@@ -14,6 +14,7 @@ from config.settings import (
     LABS,
     RANDOM_SEED,
     ISSUE_INTERVAL,
+    PROPOSAL_VOTING_DURATION,
 )
 
 from src.utils.random_utils import (
@@ -105,11 +106,170 @@ def save_proposals(proposals, output_path):
                 proposal.rejection_reason,
             ])
 
+def calculate_permission_acquisition_metrics(
+    agents,
+    activity_logs,
+):
+    """
+    権限取得人数、Stage移行率、
+    権限取得Stepを計算する。
+    """
+
+    acquisition_steps = {
+        agent.agent_id: {
+            "chat": None,
+            "vote": None,
+            "proposal": None,
+        }
+        for agent in agents
+    }
+
+    action_to_permission = {
+        "unlocked_chat": "chat",
+        "unlocked_vote": "vote",
+        "unlocked_proposal": "proposal",
+    }
+
+    # 権限を初めて取得したStepを記録
+    for log in activity_logs:
+        permission = action_to_permission.get(log.action)
+
+        if permission is None:
+            continue
+
+        if log.agent_id not in acquisition_steps:
+            continue
+
+        current_step = acquisition_steps[
+            log.agent_id
+        ][permission]
+
+        if current_step is None or log.step < current_step:
+            acquisition_steps[
+                log.agent_id
+            ][permission] = log.step
+
+    # 最終的な権限取得人数
+    chat_count = sum(
+        bool(agent.chat_permission)
+        for agent in agents
+    )
+
+    vote_count = sum(
+        bool(agent.vote_permission)
+        for agent in agents
+    )
+
+    proposal_count = sum(
+        bool(agent.proposal_permission)
+        for agent in agents
+    )
+
+    # Stage移行率
+    stage_1_to_2_rate = (
+        vote_count / chat_count
+        if chat_count > 0 else None
+    )
+
+    stage_2_to_3_rate = (
+        proposal_count / vote_count
+        if vote_count > 0 else None
+    )
+
+    # 権限取得Stepの平均
+    def mean_acquisition_step(permission):
+        steps = [
+            values[permission]
+            for values in acquisition_steps.values()
+            if values[permission] is not None
+        ]
+
+        if not steps:
+            return None
+
+        return sum(steps) / len(steps)
+
+    metrics = {
+        "stage_1_to_2_rate": stage_1_to_2_rate,
+        "stage_2_to_3_rate": stage_2_to_3_rate,
+
+        "mean_chat_acquisition_step": (
+            mean_acquisition_step("chat")
+        ),
+        "mean_vote_acquisition_step": (
+            mean_acquisition_step("vote")
+        ),
+        "mean_proposal_acquisition_step": (
+            mean_acquisition_step("proposal")
+        ),
+
+        "logged_chat_acquisition_count": sum(
+            values["chat"] is not None
+            for values in acquisition_steps.values()
+        ),
+        "logged_vote_acquisition_count": sum(
+            values["vote"] is not None
+            for values in acquisition_steps.values()
+        ),
+        "logged_proposal_acquisition_count": sum(
+            values["proposal"] is not None
+            for values in acquisition_steps.values()
+        ),
+    }
+
+    return metrics, acquisition_steps
+
+def save_permission_acquisition_steps(
+    agents,
+    acquisition_steps,
+    output_path,
+):
+    """
+    Agentごとの権限取得StepをCSVに保存する。
+    """
+
+    os.makedirs(
+        os.path.dirname(output_path),
+        exist_ok=True,
+    )
+
+    with open(
+        output_path,
+        "w",
+        newline="",
+        encoding="utf-8",
+    ) as f:
+        writer = csv.writer(f)
+
+        writer.writerow([
+            "agent_id",
+            "chat_acquisition_step",
+            "vote_acquisition_step",
+            "proposal_acquisition_step",
+            "final_chat_permission",
+            "final_vote_permission",
+            "final_proposal_permission",
+        ])
+
+        for agent in agents:
+            steps = acquisition_steps[agent.agent_id]
+
+            writer.writerow([
+                agent.agent_id,
+                steps["chat"],
+                steps["vote"],
+                steps["proposal"],
+                agent.chat_permission,
+                agent.vote_permission,
+                agent.proposal_permission,
+            ])
+
 
 def calculate_comparison_metrics(
     agents,
     activity_logs,
     proposal_metrics,
+    acquisition_metrics,
 ):
     agent_count = len(agents)
 
@@ -211,7 +371,12 @@ def calculate_comparison_metrics(
     }
 
 
-def run_single_method(initial_agents, method, seed):
+def run_single_method(
+    initial_agents, 
+    method, 
+    seed,
+    output_dir=None,
+):
     # 同じ初期Agentを複製
     agents = copy.deepcopy(initial_agents)
 
@@ -243,7 +408,14 @@ def run_single_method(initial_agents, method, seed):
         )
     )
 
-    method_dir = os.path.join(OUTPUT_DIR, method)
+    # method_dir = os.path.join(OUTPUT_DIR, method)
+    # os.makedirs(method_dir, exist_ok=True)
+
+    if output_dir is None:
+        method_dir = os.path.join(OUTPUT_DIR, method)
+    else:
+        method_dir = os.path.join(output_dir, method)
+    
     os.makedirs(method_dir, exist_ok=True)
 
     save_activity_logs(
@@ -261,10 +433,29 @@ def run_single_method(initial_agents, method, seed):
         os.path.join(method_dir, "proposal_details.csv"),
     )
 
+    # 権限取得・Stage移行の評価
+    acquisition_metrics, acquisition_steps = (
+        calculate_permission_acquisition_metrics(
+            agents,
+            activity_logs,
+        )
+    )
+
+    # 権限取得Stepを保存
+    save_permission_acquisition_steps(
+        agents,
+        acquisition_steps,
+        os.path.join(
+            method_dir,
+            "permission_acquisition_steps.csv",
+        ),
+    )
+
     metrics = calculate_comparison_metrics(
         agents,
         activity_logs,
         proposal_metrics,
+        acquisition_metrics,
     )
 
     with open(

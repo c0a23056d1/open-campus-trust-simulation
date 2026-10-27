@@ -559,7 +559,6 @@ def calculate_comparison_metrics(
     activity_logs,
     proposal_metrics,
     acquisition_metrics,
-    acquisition_metrics,
 ):
     agent_count = len(agents)
 

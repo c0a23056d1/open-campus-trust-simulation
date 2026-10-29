@@ -63,7 +63,6 @@ def update_trust_passports(
     trust_logs = [
         asdict(log)
         for log in activity_logs
-        if log.agent_id != "SYSTEM"
     ]
 
     for agent in agents:
@@ -268,23 +267,6 @@ def run_open_campus_simulation(
                             action="post_visit_comment",
                             target=selected_lab["id"],
                         )
-
-                continue
-
-            # ==================================
-            # chat
-            # ==================================
-
-            if action == "chat":
-
-                create_activity_log(
-                    logs=activity_logs,
-                    agent_id=agent.agent_id,
-                    step=environment.current_step,
-                    phase=environment.phase,
-                    action="chat",
-                    target="community",
-                )
 
                 continue
 
@@ -594,28 +576,6 @@ def run_community_simulation(
                     step=current_step,
                     phase="community",
                     action="no_action",
-                )
-
-                continue
-
-            if action == "chat":
-
-                create_activity_log(
-                    logs=activity_logs,
-                    agent_id=agent.agent_id,
-                    step=current_step,
-                    phase="community",
-                    action="chat",
-                    target="community",
-                )
-
-                # Task完了判定
-                check_task_completion(
-                    agent=agent,
-                    action=action,
-                    current_task=current_task,
-                    current_step=current_step,
-                    activity_logs=activity_logs,
                 )
 
                 continue

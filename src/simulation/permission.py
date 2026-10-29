@@ -4,18 +4,18 @@
 
 TRUST_THRESHOLDS = {
     "PT": {
-        "vote": 0.5,
-        "proposal": 0.7,
+        "vote": 0.4,
+        "proposal": 0.6,
     },
     "CT": {
-        "vote": 0.5,
-        "proposal": 0.7,
+        "vote": 0.4,
+        "proposal": 0.6,
     },
     "Multi": {
-        "vote_pt": 0.4,
-        "vote_ct": 0.4,
-        "proposal_rt": 0.6,
-        "proposal_gt": 0.6,
+        "vote_pt": 0.3,
+        "vote_ct": 0.3,
+        "proposal_rt": 0.5,
+        "proposal_gt": 0.5,
     },
 }
 

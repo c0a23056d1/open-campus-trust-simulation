@@ -94,10 +94,6 @@ TASK_DURATION = 5
 # 現段階で発生するTask
 TASK_TYPES = [
     {
-        "name": "チャットしてみよう",
-        "required_action": "chat",
-    },
-    {
         "name": "返信してみよう",
         "required_action": "reply",
     },

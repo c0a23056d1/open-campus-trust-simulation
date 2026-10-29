@@ -15,7 +15,6 @@ from config.settings import (
     RANDOM_SEED,
     ISSUE_INTERVAL,
     PROPOSAL_VOTING_DURATION,
-    PROPOSAL_VOTING_DURATION,
 )
 
 from src.utils.random_utils import (
@@ -737,10 +736,10 @@ def calculate_comparison_metrics(
             len(steps)
             for steps in login_steps_by_agent.values()
         ),
-        "chat_action_count": sum(
-            log.action == "chat"
-            for log in community_logs
-        ),
+        # "chat_action_count": sum(
+        #     log.action == "chat"
+        #     for log in community_logs
+        # ),
         "reply_action_count": sum(
             log.action == "reply"
             for log in community_logs
@@ -856,34 +855,12 @@ def run_single_method(
     )
 
     # ============================================
-    # 権限取得・Stage移行の補助評価
-    # ============================================
-
-    acquisition_metrics, acquisition_steps = (
-        calculate_permission_acquisition_metrics(
-            agents,
-            activity_logs,
-        )
-    )
-
-    # Agentごとの権限取得Stepを保存
-    save_permission_aquisition_steps(
-        agents,
-        acquisition_steps,
-        os.path.join(
-            method_dir,
-            "permission_acquisition_steps.csv",
-        ),
-    )
-
-    # ============================================
     # Community Outcome + 補助評価
     # ============================================
     metrics = calculate_comparison_metrics(
         agents,
         activity_logs,
         proposal_metrics,
-        acquisition_metrics,
         acquisition_metrics,
     )
 

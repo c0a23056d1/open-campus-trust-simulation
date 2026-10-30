@@ -774,26 +774,42 @@ def calculate_comparison_metrics(
     }
 
 
+
 def run_single_method(
-    initial_agents, 
-    method, 
+    initial_agents,
+    method,
     seed,
     output_dir=None,
+    permission_thresholds=None,
+    save_outputs=True,
 ):
-    # 同じ初期Agentを複製
+    # ============================================
+    # ① Agentの初期状態を共通化
+    # ============================================
+
     agents = copy.deepcopy(initial_agents)
 
     # 各方式の乱数Seedを統一
     random.seed(seed)
+
+    # ============================================
+    # ② Open Campus Phase
+    # ============================================
 
     environment, activity_logs, passport_history = (
         run_open_campus_simulation(
             agents=agents,
             labs=LABS,
             oc_steps=OC_STEPS,
+            community_start_step=OC_STEPS + 1,
             permission_method=method,
+            permission_thresholds=permission_thresholds,
         )
     )
+
+    # ============================================
+    # ③ Community Phase
+    # ============================================
 
     activity_logs, proposals, proposal_metrics = (
         run_community_simulation(
@@ -807,36 +823,16 @@ def run_single_method(
             total_labs=len(LABS),
             community_start_step=OC_STEPS + 1,
             permission_method=method,
+            permission_thresholds=permission_thresholds,
             return_proposal_results=True,
         )
     )
 
-    # method_dir = os.path.join(OUTPUT_DIR, method)
-    # os.makedirs(method_dir, exist_ok=True)
+    # ============================================
+    # ④ 権限取得・Stage移行の評価
+    # ※保存の有無に関係なく必ず計算
+    # ============================================
 
-    if output_dir is None:
-        method_dir = os.path.join(OUTPUT_DIR, method)
-    else:
-        method_dir = os.path.join(output_dir, method)
-    
-    os.makedirs(method_dir, exist_ok=True)
-
-    save_activity_logs(
-        activity_logs,
-        os.path.join(method_dir, "activity_logs.csv"),
-    )
-
-    save_passports(
-        passport_history,
-        os.path.join(method_dir, "trust_passports.csv"),
-    )
-
-    save_proposals(
-        proposals,
-        os.path.join(method_dir, "proposal_details.csv"),
-    )
-
-    # 権限取得・Stage移行の評価
     acquisition_metrics, acquisition_steps = (
         calculate_permission_acquisition_metrics(
             agents,
@@ -844,19 +840,11 @@ def run_single_method(
         )
     )
 
-    # 権限取得Stepを保存
-    save_permission_acquisition_steps(
-        agents,
-        acquisition_steps,
-        os.path.join(
-            method_dir,
-            "permission_acquisition_steps.csv",
-        ),
-    )
+    # ============================================
+    # ⑤ Community Outcome + 補助評価
+    # ※保存の有無に関係なく必ず計算
+    # ============================================
 
-    # ============================================
-    # Community Outcome + 補助評価
-    # ============================================
     metrics = calculate_comparison_metrics(
         agents,
         activity_logs,
@@ -864,14 +852,79 @@ def run_single_method(
         acquisition_metrics,
     )
 
-    with open(
-        os.path.join(method_dir, "metrics.json"),
-        "w",
-        encoding="utf-8",
-    ) as f:
-        json.dump(metrics, f, ensure_ascii=False, indent=2)
+    # ============================================
+    # ⑥ 詳細ファイルの保存
+    # save_outputs=True の場合のみ実行
+    # ============================================
+
+    if save_outputs:
+
+        if output_dir is None:
+            method_dir = os.path.join(OUTPUT_DIR, method)
+        else:
+            method_dir = os.path.join(output_dir, method)
+
+        os.makedirs(method_dir, exist_ok=True)
+
+        # 行動ログ
+        save_activity_logs(
+            activity_logs,
+            os.path.join(
+                method_dir,
+                "activity_logs.csv",
+            ),
+        )
+
+        # Trust Passport
+        save_passports(
+            passport_history,
+            os.path.join(
+                method_dir,
+                "trust_passports.csv",
+            ),
+        )
+
+        # Proposal詳細
+        save_proposals(
+            proposals,
+            os.path.join(
+                method_dir,
+                "proposal_details.csv",
+            ),
+        )
+
+        # 権限取得Step
+        save_permission_acquisition_steps(
+            agents,
+            acquisition_steps,
+            os.path.join(
+                method_dir,
+                "permission_acquisition_steps.csv",
+            ),
+        )
+
+        # 評価指標
+        with open(
+            os.path.join(
+                method_dir,
+                "metrics.json",
+            ),
+            "w",
+            encoding="utf-8",
+        ) as f:
+            json.dump(
+                metrics,
+                f,
+                ensure_ascii=False,
+                indent=2,
+            )
+
+    # ============================================
+    # ⑦ 評価結果を返す
+    # ============================================
 
     return metrics
+
 
 
 def save_comparison(results):

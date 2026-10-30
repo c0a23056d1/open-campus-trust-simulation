@@ -113,6 +113,7 @@ def run_open_campus_simulation(
     agents,
     labs,
     oc_steps,
+    community_start_step,
     permission_method="Stamp",
     permission_thresholds=None,
 ):
@@ -224,6 +225,7 @@ def run_open_campus_simulation(
                         unlocked_permissions = update_permissions(
                             agent=agent,
                             method="Stamp",
+                            thresholds=permission_thresholds,
                         )
 
                     else:

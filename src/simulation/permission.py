@@ -4,18 +4,18 @@
 
 TRUST_THRESHOLDS = {
     "PT": {
-        "vote": 0.5,
-        "proposal": 0.7,
+        "vote": 0.4,
+        "proposal": 0.6,
     },
     "CT": {
-        "vote": 0.5,
-        "proposal": 0.7,
+        "vote": 0.4,
+        "proposal": 0.6,
     },
     "Multi": {
-        "vote_pt": 0.4,
-        "vote_ct": 0.4,
-        "proposal_rt": 0.6,
-        "proposal_gt": 0.6,
+        "vote_pt": 0.3,
+        "vote_ct": 0.3,
+        "proposal_rt": 0.5,
+        "proposal_gt": 0.5,
     },
 }
 
@@ -144,29 +144,68 @@ def update_trust_permissions(
     return unlocked_permissions
 
 
-def update_stamp_permissions(agent):
-    """
-    スタンプ数に応じて権限を更新する。
+# def update_stamp_permissions(agent):
+#     """
+#     スタンプ数に応じて権限を更新する。
 
-    Chat     : 1個以上
-    Vote     : 3個以上
-    Proposal : 5個以上
-    """
+#     Chat     : 1個以上
+#     Vote     : 3個以上
+#     Proposal : 5個以上
+#     """
+
+#     unlocked_permissions = []
+
+#     # Chat権限
+#     if agent.stamp_count >= 1 and not agent.chat_permission:
+#         agent.chat_permission = True
+#         unlocked_permissions.append("chat")
+
+#     # Vote権限
+#     if agent.stamp_count >= 3 and not agent.vote_permission:
+#         agent.vote_permission = True
+#         unlocked_permissions.append("vote")
+
+#     # Proposal権限
+#     if agent.stamp_count >= 5 and not agent.proposal_permission:
+#         agent.proposal_permission = True
+#         unlocked_permissions.append("proposal")
+
+#     return unlocked_permissions
+
+def update_stamp_permissions(
+    agent,
+    thresholds: dict | None = None,
+) -> list[str]:
+
+    if thresholds is None:
+        thresholds = {
+            "chat": 1,
+            "vote": 3,
+            "proposal": 5,
+        }
 
     unlocked_permissions = []
 
-    # Chat権限
-    if agent.stamp_count >= 1 and not agent.chat_permission:
+    if (
+        agent.stamp_count >= thresholds["chat"]
+        and not agent.chat_permission
+    ):
         agent.chat_permission = True
         unlocked_permissions.append("chat")
 
-    # Vote権限
-    if agent.stamp_count >= 3 and not agent.vote_permission:
+    if (
+        agent.chat_permission
+        and agent.stamp_count >= thresholds["vote"]
+        and not agent.vote_permission
+    ):
         agent.vote_permission = True
         unlocked_permissions.append("vote")
 
-    # Proposal権限
-    if agent.stamp_count >= 5 and not agent.proposal_permission:
+    if (
+        agent.vote_permission
+        and agent.stamp_count >= thresholds["proposal"]
+        and not agent.proposal_permission
+    ):
         agent.proposal_permission = True
         unlocked_permissions.append("proposal")
 
@@ -188,7 +227,7 @@ def update_permissions(
     """
 
     if method == "Stamp":
-        return update_stamp_permissions(agent)
+        return update_stamp_permissions(agent, thresholds=thresholds)
 
     if method in ("PT", "CT", "Multi"):
 

@@ -74,6 +74,33 @@ def generate_passport(
         )
     ]
 
+    # =======================================
+    # SYSTEMのTask生成ログ
+    # =======================================
+
+    system_task_logs = [
+        log for log in logs
+        if (
+            log["agent_id"] == "SYSTEM"
+            and log["action"] == "task_created"
+            and log["step"] <= current_step
+        )
+    ]
+
+    # SYSTEMのIssue生成ログを取得
+    system_issue_logs = [
+        log for log in logs
+        if (
+            log["agent_id"] == "SYSTEM"
+            and log["action"] == "issue_created"
+            and log["step"] <= current_step
+        )
+    ]
+
+    # RT用：対象Agentの行動ログ＋SYSTEMのTask生成ログ
+    reliability_logs = agent_logs + system_task_logs
+    governance_logs = agent_logs + system_issue_logs
+
     # 4種類のTrustを計算
     participation = calculate_participation(
         agent_logs,
@@ -89,13 +116,13 @@ def generate_passport(
     )
 
     reliability = calculate_reliability(
-        agent_logs,
+        reliability_logs,
         current_step,
         community_start_step=community_start_step,
     )
 
     governance = calculate_governance(
-        agent_logs,
+        governance_logs,
         current_step,
         community_start_step=community_start_step,
     )

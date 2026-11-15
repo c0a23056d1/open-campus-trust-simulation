@@ -394,6 +394,164 @@ def calculate_permission_opportunities(
 
     return opportunity_agents
 
+def calculate_permission_acquisition_metrics(
+    agents,
+    activity_logs,
+):
+    """
+    権限取得人数、Stage移行率、
+    権限取得Stepを計算する。
+    """
+
+    acquisition_steps = {
+        agent.agent_id: {
+            "chat": None,
+            "vote": None,
+            "proposal": None,
+        }
+        for agent in agents
+    }
+
+    action_to_permission = {
+        "unlocked_chat": "chat",
+        "unlocked_vote": "vote",
+        "unlocked_proposal": "proposal",
+    }
+
+    # 権限を初めて取得したStepを記録
+    for log in activity_logs:
+        permission = action_to_permission.get(log.action)
+
+        if permission is None:
+            continue
+
+        if log.agent_id not in acquisition_steps:
+            continue
+
+        current_step = acquisition_steps[
+            log.agent_id
+        ][permission]
+
+        if current_step is None or log.step < current_step:
+            acquisition_steps[
+                log.agent_id
+            ][permission] = log.step
+
+    # 最終的な権限取得人数
+    chat_count = sum(
+        bool(agent.chat_permission)
+        for agent in agents
+    )
+
+    vote_count = sum(
+        bool(agent.vote_permission)
+        for agent in agents
+    )
+
+    proposal_count = sum(
+        bool(agent.proposal_permission)
+        for agent in agents
+    )
+
+    # Stage移行率
+    stage_1_to_2_rate = (
+        vote_count / chat_count
+        if chat_count > 0 else None
+    )
+
+    stage_2_to_3_rate = (
+        proposal_count / vote_count
+        if vote_count > 0 else None
+    )
+
+    # 権限取得Stepの平均
+    def mean_acquisition_step(permission):
+        steps = [
+            values[permission]
+            for values in acquisition_steps.values()
+            if values[permission] is not None
+        ]
+
+        if not steps:
+            return None
+
+        return sum(steps) / len(steps)
+
+    metrics = {
+        "stage_1_to_2_rate": stage_1_to_2_rate,
+        "stage_2_to_3_rate": stage_2_to_3_rate,
+
+        "mean_chat_acquisition_step": (
+            mean_acquisition_step("chat")
+        ),
+        "mean_vote_acquisition_step": (
+            mean_acquisition_step("vote")
+        ),
+        "mean_proposal_acquisition_step": (
+            mean_acquisition_step("proposal")
+        ),
+
+        "logged_chat_acquisition_count": sum(
+            values["chat"] is not None
+            for values in acquisition_steps.values()
+        ),
+        "logged_vote_acquisition_count": sum(
+            values["vote"] is not None
+            for values in acquisition_steps.values()
+        ),
+        "logged_proposal_acquisition_count": sum(
+            values["proposal"] is not None
+            for values in acquisition_steps.values()
+        ),
+    }
+
+    return metrics, acquisition_steps
+
+def save_permission_acquisition_steps(
+    agents,
+    acquisition_steps,
+    output_path,
+):
+    """
+    Agentごとの権限取得StepをCSVに保存する。
+    """
+
+    os.makedirs(
+        os.path.dirname(output_path),
+        exist_ok=True,
+    )
+
+    with open(
+        output_path,
+        "w",
+        newline="",
+        encoding="utf-8",
+    ) as f:
+        writer = csv.writer(f)
+
+        writer.writerow([
+            "agent_id",
+            "chat_acquisition_step",
+            "vote_acquisition_step",
+            "proposal_acquisition_step",
+            "final_chat_permission",
+            "final_vote_permission",
+            "final_proposal_permission",
+        ])
+
+        for agent in agents:
+            steps = acquisition_steps[agent.agent_id]
+
+            writer.writerow([
+                agent.agent_id,
+                steps["chat"],
+                steps["vote"],
+                steps["proposal"],
+                agent.chat_permission,
+                agent.vote_permission,
+                agent.proposal_permission,
+            ])
+
 
 def calculate_comparison_metrics(
     agents,
@@ -578,10 +736,10 @@ def calculate_comparison_metrics(
             len(steps)
             for steps in login_steps_by_agent.values()
         ),
-        "chat_action_count": sum(
-            log.action == "chat"
-            for log in community_logs
-        ),
+        # "chat_action_count": sum(
+        #     log.action == "chat"
+        #     for log in community_logs
+        # ),
         "reply_action_count": sum(
             log.action == "reply"
             for log in community_logs
@@ -616,21 +774,42 @@ def calculate_comparison_metrics(
     }
 
 
-def run_single_method(initial_agents, method, seed):
-    # 同じ初期Agentを複製
+
+def run_single_method(
+    initial_agents,
+    method,
+    seed,
+    output_dir=None,
+    permission_thresholds=None,
+    save_outputs=True,
+):
+    # ============================================
+    # ① Agentの初期状態を共通化
+    # ============================================
+
     agents = copy.deepcopy(initial_agents)
 
     # 各方式の乱数Seedを統一
     random.seed(seed)
+
+    # ============================================
+    # ② Open Campus Phase
+    # ============================================
 
     environment, activity_logs, passport_history = (
         run_open_campus_simulation(
             agents=agents,
             labs=LABS,
             oc_steps=OC_STEPS,
+            community_start_step=OC_STEPS + 1,
             permission_method=method,
+            permission_thresholds=permission_thresholds,
         )
     )
+
+    # ============================================
+    # ③ Community Phase
+    # ============================================
 
     activity_logs, proposals, proposal_metrics = (
         run_community_simulation(
@@ -644,30 +823,14 @@ def run_single_method(initial_agents, method, seed):
             total_labs=len(LABS),
             community_start_step=OC_STEPS + 1,
             permission_method=method,
+            permission_thresholds=permission_thresholds,
             return_proposal_results=True,
         )
     )
 
-    method_dir = os.path.join(OUTPUT_DIR, method)
-    os.makedirs(method_dir, exist_ok=True)
-
-    save_activity_logs(
-        activity_logs,
-        os.path.join(method_dir, "activity_logs.csv"),
-    )
-
-    save_passports(
-        passport_history,
-        os.path.join(method_dir, "trust_passports.csv"),
-    )
-
-    save_proposals(
-        proposals,
-        os.path.join(method_dir, "proposal_details.csv"),
-    )
-
     # ============================================
-    # 権限取得・Stage移行の補助評価
+    # ④ 権限取得・Stage移行の評価
+    # ※保存の有無に関係なく必ず計算
     # ============================================
 
     acquisition_metrics, acquisition_steps = (
@@ -677,19 +840,11 @@ def run_single_method(initial_agents, method, seed):
         )
     )
 
-    # Agentごとの権限取得Stepを保存
-    save_permission_aquisition_steps(
-        agents,
-        acquisition_steps,
-        os.path.join(
-            method_dir,
-            "permission_acquisition_steps.csv",
-        ),
-    )
+    # ============================================
+    # ⑤ Community Outcome + 補助評価
+    # ※保存の有無に関係なく必ず計算
+    # ============================================
 
-    # ============================================
-    # Community Outcome + 補助評価
-    # ============================================
     metrics = calculate_comparison_metrics(
         agents,
         activity_logs,
@@ -697,14 +852,79 @@ def run_single_method(initial_agents, method, seed):
         acquisition_metrics,
     )
 
-    with open(
-        os.path.join(method_dir, "metrics.json"),
-        "w",
-        encoding="utf-8",
-    ) as f:
-        json.dump(metrics, f, ensure_ascii=False, indent=2)
+    # ============================================
+    # ⑥ 詳細ファイルの保存
+    # save_outputs=True の場合のみ実行
+    # ============================================
+
+    if save_outputs:
+
+        if output_dir is None:
+            method_dir = os.path.join(OUTPUT_DIR, method)
+        else:
+            method_dir = os.path.join(output_dir, method)
+
+        os.makedirs(method_dir, exist_ok=True)
+
+        # 行動ログ
+        save_activity_logs(
+            activity_logs,
+            os.path.join(
+                method_dir,
+                "activity_logs.csv",
+            ),
+        )
+
+        # Trust Passport
+        save_passports(
+            passport_history,
+            os.path.join(
+                method_dir,
+                "trust_passports.csv",
+            ),
+        )
+
+        # Proposal詳細
+        save_proposals(
+            proposals,
+            os.path.join(
+                method_dir,
+                "proposal_details.csv",
+            ),
+        )
+
+        # 権限取得Step
+        save_permission_acquisition_steps(
+            agents,
+            acquisition_steps,
+            os.path.join(
+                method_dir,
+                "permission_acquisition_steps.csv",
+            ),
+        )
+
+        # 評価指標
+        with open(
+            os.path.join(
+                method_dir,
+                "metrics.json",
+            ),
+            "w",
+            encoding="utf-8",
+        ) as f:
+            json.dump(
+                metrics,
+                f,
+                ensure_ascii=False,
+                indent=2,
+            )
+
+    # ============================================
+    # ⑦ 評価結果を返す
+    # ============================================
 
     return metrics
+
 
 
 def save_comparison(results):

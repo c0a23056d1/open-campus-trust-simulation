@@ -1,0 +1,12 @@
+{
+  "seed_count": 30,
+  "start_seed": 42,
+  "end_seed": 71,
+  "methods": [
+    "Stamp",
+    "PT",
+    "CT",
+    "Multi"
+  ],
+  "num_agents": 100
+}

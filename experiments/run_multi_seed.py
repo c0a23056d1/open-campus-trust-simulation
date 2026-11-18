@@ -12,6 +12,8 @@ from experiments.compare_permission_methods import (
     run_single_method,
 )
 
+from src.evaluation.proposal_metrics import calculate_bpar
+
 OUTPUT_DIR = "results/multi_seed"
 
 # 最初は3 Seedで動作確認し、問題なければ30に変更
@@ -60,6 +62,23 @@ def summarize_metrics(rows):
             "method": method,
             "seed_count": len(method_rows),
         }
+
+        # ==========================================
+        # BPAR：最高PQS提案採択率
+        # ==========================================
+        if (
+            method_rows
+            and all(
+                "best_pqs_accepted" in row
+                and "best_pqs_eligible" in row
+                for row in method_rows
+            )
+        ):
+            summary["BPAR"] = calculate_bpar(method_rows)
+            summary["BPAR_n"] = sum(
+                row["best_pqs_eligible"]
+                for row in method_rows
+            )
 
         # 評価指標の列を取得
         metric_names = [

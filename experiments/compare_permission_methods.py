@@ -761,6 +761,11 @@ def calculate_comparison_metrics(
         "PAR": proposal_metrics["PAR"],
         "TAQ": proposal_metrics["TAQ"],
 
+        # 最高PQS提案の採択判定（BPAR集計用）
+        "best_pqs": proposal_metrics["best_pqs"],
+        "best_pqs_accepted": proposal_metrics["best_pqs_accepted"],
+        "best_pqs_eligible": proposal_metrics["best_pqs_eligible"],
+
         "rejected_insufficient_votes": (
             proposal_metrics["rejected_insufficient_votes"]
         ),

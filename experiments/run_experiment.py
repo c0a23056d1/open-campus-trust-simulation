@@ -69,6 +69,7 @@ def main():
             agents=agents,
             labs=LABS,
             oc_steps=OC_STEPS,
+            community_start_step=OC_STEPS + 1,
             permission_method=PERMISSION_METHOD,
         )
     )
@@ -216,6 +217,21 @@ def main():
         f"採択Proposal品質合計(TAQ): "
         f"{proposal_metrics['TAQ']:.3f}"
     )
+
+    print()
+    print("---- Best PQS Proposal Result ----")
+
+    best_pqs = proposal_metrics["best_pqs"]
+
+    if best_pqs is not None:
+        print(f"最高PQS: {best_pqs:.3f}")
+        print(
+            "最高PQS提案の採択:",
+            "採択" if proposal_metrics["best_pqs_accepted"]
+            else "不採択"
+        )
+    else:
+        print("Proposalが存在しないため評価対象外")
 
     print(
         f"最低投票数不足による不採択: "

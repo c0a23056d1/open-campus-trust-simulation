@@ -13,6 +13,7 @@ from copy import deepcopy
 from experiments.compare_permission_methods import (
     NUM_AGENTS, RANDOM_SEED, generate_agents, run_single_method,
 )
+from src.evaluation.proposal_metrics import calculate_bpar
 
 BASE = {
     "Stamp": {"chat": 1, "vote": 3, "proposal": 5},
@@ -28,7 +29,7 @@ def conditions():
         if method == "Stamp":
             # スタンプ上限が5個の場合、閾値6は到達不能なため使用しない。
             variations = [("vote", 2), ("vote", 4),
-                          ("proposal", 3), ("proposal", 4)]
+                          ("proposal", 4), ("proposal", 6)]
             for key, level in variations:
                 t = deepcopy(base)
                 t[key] = level
@@ -78,6 +79,33 @@ def summarize(rows):
         grouped.setdefault(key, []).append(row)
     result = []
     for (method, analysis, condition, thresholds), group in grouped.items():
+        # ==========================================
+        # BPAR：最高PQS提案採択率
+        # ==========================================
+        if all(
+            "best_pqs_accepted" in row
+            and "best_pqs_eligible" in row
+            for row in group
+        ):
+            bpar = calculate_bpar(group)
+
+            if bpar is not None:
+                result.append({
+                    "method": method,
+                    "analysis": analysis,
+                    "condition": condition,
+                    "thresholds": thresholds,
+                    "metric": "BPAR",
+                    "n": sum(
+                        row["best_pqs_eligible"]
+                        for row in group
+                    ),
+                    "mean": bpar,
+                    "std_dev": None,
+                    "min": None,
+                    "max": None,
+                })
+
         for metric in group[0]:
             if metric in metadata:
                 continue

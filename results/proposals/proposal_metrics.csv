@@ -1,2 +1,2 @@
-APQ,APC,SPQ,PAR,TAQ,submitted_count,rejected_insufficient_votes,rejected_insufficient_approval,open_count
-,0,0.5845017679989346,0.0,0,3,0,3,0
+APQ,APC,SPQ,PAR,TAQ,submitted_count,rejected_insufficient_votes,rejected_insufficient_approval,open_count,best_pqs,best_pqs_accepted,best_pqs_eligible
+0.6986806260309149,2,0.5109523815908847,0.05405405405405406,1.3973612520618297,37,21,14,0,0.7525678112967386,1,1

@@ -1,4 +1,5 @@
 ﻿method,analysis,condition,thresholds,metric,n,mean,std_dev,min,max
+Stamp,baseline,baseline,"{""chat"": 1, ""proposal"": 5, ""vote"": 3}",BPAR,30,0.5333333333333333,,,
 Stamp,baseline,baseline,"{""chat"": 1, ""proposal"": 5, ""vote"": 3}",agent_count,30,100.0,0.0,100.0,100.0
 Stamp,baseline,baseline,"{""chat"": 1, ""proposal"": 5, ""vote"": 3}",chat_permission_count,30,100.0,0.0,100.0,100.0
 Stamp,baseline,baseline,"{""chat"": 1, ""proposal"": 5, ""vote"": 3}",vote_permission_count,30,64.3,6.204281058130415,52.0,77.0
@@ -31,6 +32,9 @@ Stamp,baseline,baseline,"{""chat"": 1, ""proposal"": 5, ""vote"": 3}",APQ,18,0.6
 Stamp,baseline,baseline,"{""chat"": 1, ""proposal"": 5, ""vote"": 3}",SPQ,30,0.45292523630587794,0.04136311680719477,0.38057596453849124,0.5463675719033054
 Stamp,baseline,baseline,"{""chat"": 1, ""proposal"": 5, ""vote"": 3}",PAR,30,0.06663177464993691,0.08853358687462394,0.0,0.2857142857142857
 Stamp,baseline,baseline,"{""chat"": 1, ""proposal"": 5, ""vote"": 3}",TAQ,30,0.7372757307541761,1.03254870912015,0.0,4.4852021157290896
+Stamp,baseline,baseline,"{""chat"": 1, ""proposal"": 5, ""vote"": 3}",best_pqs,30,0.6207440532268491,0.0727677526550687,0.5010582093704941,0.7817005291243388
+Stamp,baseline,baseline,"{""chat"": 1, ""proposal"": 5, ""vote"": 3}",best_pqs_accepted,30,0.5333333333333333,0.5074162634049248,0.0,1.0
+Stamp,baseline,baseline,"{""chat"": 1, ""proposal"": 5, ""vote"": 3}",best_pqs_eligible,30,1.0,0.0,1.0,1.0
 Stamp,baseline,baseline,"{""chat"": 1, ""proposal"": 5, ""vote"": 3}",rejected_insufficient_votes,30,2.566666666666667,4.231925732134113,0.0,19.0
 Stamp,baseline,baseline,"{""chat"": 1, ""proposal"": 5, ""vote"": 3}",rejected_insufficient_approval,30,14.2,5.460832322565161,4.0,26.0
 Stamp,baseline,baseline,"{""chat"": 1, ""proposal"": 5, ""vote"": 3}",open_count,30,0.0,0.0,0.0,0.0
@@ -42,6 +46,7 @@ Stamp,baseline,baseline,"{""chat"": 1, ""proposal"": 5, ""vote"": 3}",mean_propo
 Stamp,baseline,baseline,"{""chat"": 1, ""proposal"": 5, ""vote"": 3}",logged_chat_acquisition_count,30,100.0,0.0,100.0,100.0
 Stamp,baseline,baseline,"{""chat"": 1, ""proposal"": 5, ""vote"": 3}",logged_vote_acquisition_count,30,64.3,6.204281058130415,52.0,77.0
 Stamp,baseline,baseline,"{""chat"": 1, ""proposal"": 5, ""vote"": 3}",logged_proposal_acquisition_count,30,9.433333333333334,2.5008044682673107,6.0,16.0
+PT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",BPAR,30,0.4666666666666667,,,
 PT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",agent_count,30,100.0,0.0,100.0,100.0
 PT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",chat_permission_count,30,100.0,0.0,100.0,100.0
 PT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",vote_permission_count,30,55.166666666666664,5.0724634111515545,42.0,65.0
@@ -74,6 +79,9 @@ PT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",APQ,28,0.6490152791843
 PT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",SPQ,30,0.48632278227256204,0.033722290461347254,0.4090805991913593,0.5505695635621769
 PT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",PAR,30,0.09454680088447806,0.08016806332578873,0.0,0.3333333333333333
 PT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",TAQ,30,2.170697418507084,1.4224844064617514,0.0,5.21033837921063
+PT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",best_pqs,30,0.6931976903284001,0.05368468658583925,0.558409037136832,0.7905198246149249
+PT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",best_pqs_accepted,30,0.4666666666666667,0.5074162634049248,0.0,1.0
+PT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",best_pqs_eligible,30,1.0,0.0,1.0,1.0
 PT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",rejected_insufficient_votes,30,16.233333333333334,10.692192876381679,1.0,40.0
 PT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",rejected_insufficient_approval,30,18.766666666666666,4.231925732134113,9.0,28.0
 PT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",open_count,30,0.0,0.0,0.0,0.0
@@ -85,6 +93,7 @@ PT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",mean_proposal_acquisit
 PT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",logged_chat_acquisition_count,30,100.0,0.0,100.0,100.0
 PT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",logged_vote_acquisition_count,30,55.166666666666664,5.0724634111515545,42.0,65.0
 PT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",logged_proposal_acquisition_count,30,17.166666666666668,4.315835583245636,9.0,25.0
+CT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",BPAR,30,0.5333333333333333,,,
 CT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",agent_count,30,100.0,0.0,100.0,100.0
 CT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",chat_permission_count,30,100.0,0.0,100.0,100.0
 CT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",vote_permission_count,30,84.2,2.9988503544318217,80.0,90.0
@@ -117,6 +126,9 @@ CT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",APQ,30,0.6460055963706
 CT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",SPQ,30,0.5250237351592479,0.023469458155432464,0.48422111266497536,0.5630476889981172
 CT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",PAR,30,0.13339693070618971,0.05779540876714079,0.046511627906976744,0.2564102564102564
 CT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",TAQ,30,4.897780663993228,2.0474012089941716,1.7825501511807635,8.489063958475276
+CT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",best_pqs,30,0.7244800756677677,0.039919896763370294,0.6365476374980991,0.7915347429700207
+CT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",best_pqs_accepted,30,0.5333333333333333,0.5074162634049248,0.0,1.0
+CT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",best_pqs_eligible,30,1.0,0.0,1.0,1.0
 CT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",rejected_insufficient_votes,30,31.5,19.409826874816396,1.0,80.0
 CT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",rejected_insufficient_approval,30,21.5,4.695926334380793,13.0,29.0
 CT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",open_count,30,0.0,0.0,0.0,0.0
@@ -128,6 +140,7 @@ CT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",mean_proposal_acquisit
 CT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",logged_chat_acquisition_count,30,100.0,0.0,100.0,100.0
 CT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",logged_vote_acquisition_count,30,84.2,2.9988503544318217,80.0,90.0
 CT,baseline,baseline,"{""proposal"": 0.6, ""vote"": 0.4}",logged_proposal_acquisition_count,30,39.0,6.411197101623228,26.0,56.0
+Multi,baseline,baseline,"{""proposal_gt"": 0.5, ""proposal_rt"": 0.5, ""vote_ct"": 0.3, ""vote_pt"": 0.3}",BPAR,30,0.4666666666666667,,,
 Multi,baseline,baseline,"{""proposal_gt"": 0.5, ""proposal_rt"": 0.5, ""vote_ct"": 0.3, ""vote_pt"": 0.3}",agent_count,30,100.0,0.0,100.0,100.0
 Multi,baseline,baseline,"{""proposal_gt"": 0.5, ""proposal_rt"": 0.5, ""vote_ct"": 0.3, ""vote_pt"": 0.3}",chat_permission_count,30,100.0,0.0,100.0,100.0
 Multi,baseline,baseline,"{""proposal_gt"": 0.5, ""proposal_rt"": 0.5, ""vote_ct"": 0.3, ""vote_pt"": 0.3}",vote_permission_count,30,68.46666666666667,3.8750602516635775,61.0,76.0
@@ -160,6 +173,9 @@ Multi,baseline,baseline,"{""proposal_gt"": 0.5, ""proposal_rt"": 0.5, ""vote_ct"
 Multi,baseline,baseline,"{""proposal_gt"": 0.5, ""proposal_rt"": 0.5, ""vote_ct"": 0.3, ""vote_pt"": 0.3}",SPQ,30,0.501374324107913,0.03431397795277378,0.4264784206909223,0.5663245416958758
 Multi,baseline,baseline,"{""proposal_gt"": 0.5, ""proposal_rt"": 0.5, ""vote_ct"": 0.3, ""vote_pt"": 0.3}",PAR,30,0.08363659171909384,0.0608115636290745,0.0,0.3
 Multi,baseline,baseline,"{""proposal_gt"": 0.5, ""proposal_rt"": 0.5, ""vote_ct"": 0.3, ""vote_pt"": 0.3}",TAQ,30,2.400433007292793,1.6242124337540387,0.0,6.182878413400408
+Multi,baseline,baseline,"{""proposal_gt"": 0.5, ""proposal_rt"": 0.5, ""vote_ct"": 0.3, ""vote_pt"": 0.3}",best_pqs,30,0.711515603513545,0.04762485711023712,0.606789605894179,0.7966577244737794
+Multi,baseline,baseline,"{""proposal_gt"": 0.5, ""proposal_rt"": 0.5, ""vote_ct"": 0.3, ""vote_pt"": 0.3}",best_pqs_accepted,30,0.4666666666666667,0.5074162634049248,0.0,1.0
+Multi,baseline,baseline,"{""proposal_gt"": 0.5, ""proposal_rt"": 0.5, ""vote_ct"": 0.3, ""vote_pt"": 0.3}",best_pqs_eligible,30,1.0,0.0,1.0,1.0
 Multi,baseline,baseline,"{""proposal_gt"": 0.5, ""proposal_rt"": 0.5, ""vote_ct"": 0.3, ""vote_pt"": 0.3}",rejected_insufficient_votes,30,26.1,15.173365957583657,3.0,58.0
 Multi,baseline,baseline,"{""proposal_gt"": 0.5, ""proposal_rt"": 0.5, ""vote_ct"": 0.3, ""vote_pt"": 0.3}",rejected_insufficient_approval,30,16.233333333333334,4.910813777167995,7.0,25.0
 Multi,baseline,baseline,"{""proposal_gt"": 0.5, ""proposal_rt"": 0.5, ""vote_ct"": 0.3, ""vote_pt"": 0.3}",open_count,30,0.0,0.0,0.0,0.0
